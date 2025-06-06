@@ -32,4 +32,6 @@ public interface DeveloperRepository extends JpaRepository<Developer, Long> {
     Optional<Developer> findDeveloperByTaskId(Long taskId);
 
     Page<Developer> findByEmailContaining(String email, Pageable pageable);
+
+    void deleteById(UUID id);
 }

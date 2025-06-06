@@ -3,10 +3,8 @@ package gtp.projecttracker.model.jpa;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
 @Table(name = "developers")
@@ -28,6 +26,11 @@ public class Developer {
     @CollectionTable(name = "developer_skills", joinColumns = @JoinColumn(name = "developer_id"))
     @Column(name = "skill")
     private Set<String> skills = new HashSet<>();
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
 
     public UUID getId() {
         return id;
@@ -59,6 +62,22 @@ public class Developer {
 
     public void setSkills(Set<String> skills) {
         this.skills = skills;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

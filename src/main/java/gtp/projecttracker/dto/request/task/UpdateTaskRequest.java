@@ -1,7 +1,8 @@
-package gtp.projecttracker.dto.request;
+package gtp.projecttracker.dto.request.task;
 
 import jakarta.validation.constraints.*;
-import gtp.projecttracker.model.jpa.Task;
+import gtp.projecttracker.model.jpa.Task.Status;
+import gtp.projecttracker.model.jpa.Task.Priority;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -14,7 +15,9 @@ public record UpdateTaskRequest(
         @Size(max = 500, message = "Description cannot exceed 500 characters")
         Optional<String> description,
 
-        Optional<Task.Status> status,
+        Optional<Status> status,
+
+        Optional<Priority> priority,
 
         @Future(message = "Due date must be in the future")
         Optional<LocalDate> dueDate,

@@ -1,4 +1,4 @@
-package gtp.projecttracker.dto.request;
+package gtp.projecttracker.dto.request.project;
 
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;

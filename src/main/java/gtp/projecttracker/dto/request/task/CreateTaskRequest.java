@@ -1,4 +1,4 @@
-package gtp.projecttracker.dto.request;
+package gtp.projecttracker.dto.request.task;
 
 import gtp.projecttracker.model.jpa.Task.Priority;
 import gtp.projecttracker.model.jpa.Task.Status;
@@ -11,23 +11,28 @@ public record CreateTaskRequest(
         @Size(min = 2, max = 255, message = "Title must be between 2 and 255 characters")
         String title,
 
-        @Size(min = 2, max = 500, message = "Description must be between 2 and 500 characters")
+        @Size(max = 500, message = "Description must not exceed 500 characters")
         String description,
 
         @NotNull(message = "Due date is required")
         @FutureOrPresent(message = "Due date must be in the present or future")
         LocalDate dueDate,
 
-        @NotNull(message = "Project ID is required")
         UUID projectId,
+
+        UUID assigneeId,
 
         Priority priority,
 
         Status status
 ) {
+    // Compact constructor for defaults
     public CreateTaskRequest {
         if (status == null) {
             status = Status.TODO;
+        }
+        if (priority == null) {
+            priority = Priority.MEDIUM;
         }
     }
 }

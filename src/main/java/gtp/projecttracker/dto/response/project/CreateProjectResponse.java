@@ -1,4 +1,4 @@
-package gtp.projecttracker.dto.response;
+package gtp.projecttracker.dto.response.project;
 
 import gtp.projecttracker.model.jpa.Project;
 
