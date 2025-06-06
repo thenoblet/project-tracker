@@ -16,7 +16,7 @@ public class AuditLog {
     private ActionType actionType;
     private String entityType;
     private String entityId;
-    private final Instant timestamp = Instant.now();
+    private Instant timestamp = Instant.now();
     private String actorName;
     private ObjectNode payload;
 
@@ -58,6 +58,10 @@ public class AuditLog {
 
     public Instant getTimestamp() {
         return timestamp;
+    }
+
+    public void setTimestamp(Instant now) {
+        this.timestamp = now;
     }
 
     public String getActorName() {

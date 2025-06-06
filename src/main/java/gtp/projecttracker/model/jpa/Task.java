@@ -31,7 +31,7 @@ public class Task {
     private Priority priority = Priority.LOW;
 
     @FutureOrPresent
-    @NotBlank
+    @NotNull
     private LocalDate dueDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -64,10 +64,6 @@ public class Task {
     }
 
     public Task() {
-    }
-
-    public Task() {
-        
     }
 
     public Task(String title, String description, Status status, Priority priority, LocalDate dueDate) {
@@ -135,7 +131,7 @@ public class Task {
         return dueDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
+    public void setDueDate(@FutureOrPresent @NotNull LocalDate dueDate) {
         this.dueDate = dueDate;
     }
 

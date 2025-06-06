@@ -2,14 +2,10 @@ package gtp.projecttracker.model.jpa;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "projects")
