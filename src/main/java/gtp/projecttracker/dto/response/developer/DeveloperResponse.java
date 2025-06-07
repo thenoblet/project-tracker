@@ -9,6 +9,7 @@ public record DeveloperResponse(
         String name,
         String email,
         Set<String> skills,
+        Integer taskCount,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}

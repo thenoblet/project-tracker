@@ -25,6 +25,7 @@ public class DeveloperMapper {
                 developer.getName(),
                 developer.getEmail(),
                 developer.getSkills(),
+                developer.getTaskCount(),
                 developer.getCreatedAt(),
                 developer.getUpdatedAt()
         );
@@ -86,10 +87,11 @@ public class DeveloperMapper {
         return new DeveloperResponse(
                 developer.getId(),
                 developer.getName(),
-                null, // no email
-                null,  // no skills
-                null,  // no createdAt
-                null   // no updatedAt
+                null,
+                null,
+                0,
+                null,
+                null
         );
     }
 }

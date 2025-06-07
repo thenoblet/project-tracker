@@ -30,4 +30,18 @@ public record ProjectResponse (
                 project.getUpdatedAt()
         );
     }
+
+    public ProjectResponse withTasks(Object o) {
+        return new ProjectResponse(
+                id,
+                name,
+                description,
+                deadline,
+                startDate,
+                status,
+                taskCount,
+                createdAt,
+                updatedAt
+        );
+    }
 }
