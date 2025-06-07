@@ -1,6 +1,6 @@
-Here's a comprehensive endpoints table extracted from your OpenAPI specification:
 
-## API Endpoints Reference
+
+# API Endpoints Reference
 
 ### Projects
 
