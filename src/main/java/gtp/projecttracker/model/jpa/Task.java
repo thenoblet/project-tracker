@@ -30,7 +30,7 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private Priority priority = Priority.LOW;
 
-    @FutureOrPresent
+    //@FutureOrPresent
     @NotNull
     private LocalDate dueDate;
 

@@ -68,4 +68,17 @@ public class TaskController {
     public ResponseEntity<TaskResponse> assignTask(@PathVariable UUID id, @RequestBody AssignTaskRequest request) throws BadRequestException {
         return ResponseEntity.ok(taskService.assignTask(id, request));
     }
+
+    @GetMapping("/overdue")
+    public ResponseEntity<Page<TaskResponse>> getOverdueTasks(
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(taskService.getOverdueTasks(pageable));
+    }
+
+    @GetMapping("/test-publish")
+    public String testPublish() {
+        Task tasked = taskService.getTaskEntityById(UUID.fromString("c067c1c2-fd74-435d-bcbd-5caaff576dfe"));
+        taskService.checkAndNotifyIfOverdue(tasked);
+        return "Test event published";
+    }
 }

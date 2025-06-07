@@ -4,6 +4,7 @@ import gtp.projecttracker.dto.request.developer.CreateDeveloperRequest;
 import gtp.projecttracker.dto.request.developer.UpdateDeveloperRequest;
 import gtp.projecttracker.dto.response.developer.DeveloperResponse;
 import gtp.projecttracker.exception.DeveloperAlreadyExistsException;
+import gtp.projecttracker.exception.ResourceNotFoundException;
 import gtp.projecttracker.mapper.DeveloperMapper;
 import gtp.projecttracker.model.jpa.Developer;
 import gtp.projecttracker.repository.jpa.DeveloperRepository;
@@ -34,13 +35,13 @@ public class DeveloperService {
 
     @Cacheable(value = "developers", key = "#id")
     public DeveloperResponse getDeveloperById(UUID id) {
-        Developer developer = developerRepository.findById(id);
+        Developer developer = developerRepository.findDeveloperById(id);
         return developerMapper.toResponse(developer);
     }
 
 
     public Developer getDeveloperEntityById(UUID id) {
-        return developerRepository.findById(id);
+        return developerRepository.findDeveloperById(id);
     }
 
     public Page<DeveloperResponse> getAllDevelopers(Pageable pageable) {
@@ -49,7 +50,7 @@ public class DeveloperService {
         return new PageImpl<>(responses, pageable, developers.getTotalElements());
     }
 
-    public Optional<DeveloperResponse> getDeveloperByTaskId(Long taskId) {
+    public Optional<DeveloperResponse> getDeveloperByTaskId(UUID taskId) {
         return developerRepository.findDeveloperByTaskId(taskId)
                 .map(developerMapper::toResponse);
     }
@@ -70,7 +71,7 @@ public class DeveloperService {
     @Transactional
     @CacheEvict(value = "developers", key = "#id")
     public DeveloperResponse updateDeveloper(UUID id, UpdateDeveloperRequest request) {
-        Developer developer = developerRepository.findById(id);
+        Developer developer = developerRepository.findDeveloperById(id);
 
         developerMapper.updateEntity(developer, request);
         Developer updatedDeveloper = developerRepository.save(developer);
@@ -79,7 +80,21 @@ public class DeveloperService {
 
     @Transactional
     @CacheEvict(value = "developers", key = "#id")
+    public DeveloperResponse patchDeveloper(UUID id, UpdateDeveloperRequest patchRequest) {
+        Developer developer = developerRepository.findDeveloperById(id);
+
+        developerMapper.updateEntity(developer, patchRequest);
+
+        Developer updatedDeveloper = developerRepository.save(developer);
+        return developerMapper.toResponse(updatedDeveloper);
+    }
+
+    @Transactional
+    @CacheEvict(value = "developers", key = "#id")
     public void deleteDeveloper(UUID id) {
+        if (!existsById(id)) {
+            throw new ResourceNotFoundException("Developer not found with id: " + id);
+        }
         developerRepository.deleteById(id);
     }
 
@@ -91,7 +106,7 @@ public class DeveloperService {
     @Transactional
     @CacheEvict(value = "developers", key = "#id")
     public DeveloperResponse updateDeveloperSkills(UUID id, List<String> skills) {
-        Developer developer = developerRepository.findById(id);
+        Developer developer = developerRepository.findDeveloperById(id);
         developer.getSkills().clear();
         developer.getSkills().addAll(skills);
         Developer updatedDeveloper = developerRepository.save(developer);
@@ -104,5 +119,26 @@ public class DeveloperService {
                 .map(result -> (Developer) result[0])
                 .map(developerMapper::toResponse)
                 .toList();
+    }
+
+    public Page<DeveloperResponse> searchDevelopers(String name, String email, String skill, Pageable pageable) {
+        if (name == null && email == null && skill == null) {
+            return getAllDevelopers(pageable);
+        }
+
+        Page<Developer> developers;
+        if (skill != null) {
+            List<Developer> devsBySkill = developerRepository.findBySkillsContaining(skill);
+            developers = new PageImpl<>(devsBySkill, pageable, devsBySkill.size());
+        } else {
+            developers = developerRepository.searchDevelopers(name, email, pageable);
+        }
+
+        List<DeveloperResponse> responses = developerMapper.toResponseList(developers.getContent());
+        return new PageImpl<>(responses, pageable, developers.getTotalElements());
+    }
+
+    public boolean existsById(UUID developerId) {
+        return developerId != null && developerRepository.existsById(developerId);
     }
 }

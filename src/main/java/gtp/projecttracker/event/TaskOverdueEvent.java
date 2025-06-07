@@ -1,4 +1,6 @@
 package gtp.projecttracker.event;
 
-public class TaskOverdueEvent {
+import gtp.projecttracker.model.jpa.Task;
+
+public record TaskOverdueEvent(Task task, int daysOverdue) {
 }

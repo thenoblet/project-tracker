@@ -2,6 +2,7 @@ package gtp.projecttracker.model.jpa;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -18,7 +19,7 @@ public class Developer {
     @Size(max = 50)
     private String name;
 
-    @Email
+    @NotBlank
     @Column(unique = true)
     private String email;
 
@@ -26,6 +27,9 @@ public class Developer {
     @CollectionTable(name = "developer_skills", joinColumns = @JoinColumn(name = "developer_id"))
     @Column(name = "skill")
     private Set<String> skills = new HashSet<>();
+
+    @Formula("(SELECT COUNT(*) FROM tasks t WHERE t.developer_id = id)")
+    Integer taskCount;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -62,6 +66,14 @@ public class Developer {
 
     public void setSkills(Set<String> skills) {
         this.skills = skills;
+    }
+
+    public Integer getTaskCount() {
+        return taskCount;
+    }
+
+    public void setTaskCount(Integer taskCount) {
+        this.taskCount = taskCount;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

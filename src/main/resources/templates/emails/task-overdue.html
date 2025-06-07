@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Overdue Notification</title>
+</head>
+<body>
+<h1>Task Overdue Notification</h1>
+<p>Dear <span th:text="${assigneeName}">Developer</span>,</p>
+
+<p>The following task is overdue by <span th:text="${daysOverdue}">X</span> days:</p>
+
+<ul>
+    <li><strong>Title:</strong> <span th:text="${taskTitle}">Task Title</span>></li>
+    <li><strong>Project:</strong> <span th:text:${assigneeName}>Project Name</span></li>
+    <li><strong>Assignee:</strong> <span th:text="${assigneeName}">Assignee Name</span></li>
+    <li><strong>Days Overdue:</strong> <span th:text="${daysOverdue}">Days Overdue</span></li>
+</ul>
+
+<p>Please update the task status or contact your project manager.</p>
+
+<footer>
+    <p>Regards,<br>Product Team<br>BuildMaster</p>
+</footer>
+</body>
+</html>

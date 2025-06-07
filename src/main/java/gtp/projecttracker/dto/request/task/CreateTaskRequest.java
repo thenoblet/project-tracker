@@ -15,7 +15,7 @@ public record CreateTaskRequest(
         String description,
 
         @NotNull(message = "Due date is required")
-        @FutureOrPresent(message = "Due date must be in the present or future")
+        //@FutureOrPresent(message = "Due date must be in the present or future")
         LocalDate dueDate,
 
         UUID projectId,
