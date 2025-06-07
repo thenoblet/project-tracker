@@ -22,8 +22,8 @@ import java.util.UUID;
 public interface TaskRepository extends JpaRepository<Task, UUID>, JpaSpecificationExecutor<Task> {
     Page<Task> findByProjectId(UUID projectId, Pageable pageable);
 
-    @Query("SELECT t FROM Task t WHERE t.dueDate < CURRENT_DATE and t.status <> 'DONE'")
-    List<Task> findOverdueTasks();
+    @Query("SELECT t FROM Task t LEFT JOIN FETCH t.assignee WHERE t.dueDate <= :currentDate and t.status <> 'DONE'")
+    Page<Task> findOverdueTasks(@Param("currentDate") LocalDate currentDate, Pageable pageable);
 
     @Query("SELECT t FROM Task t WHERE t.assignee.id = :developerId")
     List<Task> findByDeveloperId(@Param("developerId") UUID developerId);

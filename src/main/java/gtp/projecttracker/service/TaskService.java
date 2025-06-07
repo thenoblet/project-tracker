@@ -14,6 +14,8 @@ import gtp.projecttracker.model.jpa.Task.Priority;
 import gtp.projecttracker.repository.jpa.TaskRepository;
 
 import org.apache.coyote.BadRequestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -27,7 +29,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class TaskService {
@@ -35,6 +39,9 @@ public class TaskService {
     private final TaskMapper taskMapper;
     private final DeveloperService developerService;
     private final ApplicationEventPublisher eventPublisher;
+    private final Map<UUID, LocalDate> lastNotificationSent = new ConcurrentHashMap<>();
+
+    private static final Logger log = LoggerFactory.getLogger(TaskService.class);
 
     @Autowired
     public TaskService(TaskRepository taskRepository,
@@ -60,14 +67,7 @@ public class TaskService {
                 .map(taskMapper::toResponse);
     }
 
-    public Page<TaskResponse> getOverdueTasks(Pageable pageable) {
-        Page<Task> tasks = taskRepository.findByDueDateBeforeAndStatusNot(
-                LocalDate.now(),
-                Status.DONE,
-                pageable
-        );
-        return tasks.map(taskMapper::toResponse);
-    }
+    
 
     public List<TaskResponse> getTasksByDeveloperId(UUID developerId) {
         if (!developerService.existsById(developerId)) {
@@ -158,7 +158,17 @@ public class TaskService {
         return taskMapper.toResponse(taskRepository.save(entity));
     }
 
+    @Transactional
     public void deleteAllTasksByProjectId(UUID id) {
+        if (!taskRepository.existsByProjectId(id)) {
+            throw new ResourceNotFoundException("No tasks found for project with id: " + id);
+        }
+        taskRepository.deleteByProjectId(id);
+    }
+
+    public Page<TaskResponse> getOverdueTasks(Pageable pageable) {
+        return taskRepository.findOverdueTasks(LocalDate.now(), pageable)
+                .map(taskMapper::toResponse);
     }
 
     public Page<TaskResponse> getOverdueTasksByProject(UUID projectId, Pageable pageable) {
@@ -170,65 +180,88 @@ public class TaskService {
         ).map(taskMapper::toResponse);
     }
 
-    @Scheduled(fixedDelayString = "${app.notifications.overdue-check-interval:300000}")
+    @Scheduled(fixedDelayString = "${app.notifications.overdue-check-interval:5000}")
     @Transactional
     public void checkAndNotifyOverdueTasks() {
+        log.info("Checking for overdue tasks at {}", LocalDateTime.now());
+
         LocalDate today = LocalDate.now();
         Page<Task> overdueTasksPage;
         int page = 0;
         final int pageSize = 100;
+        int totalTasksProcessed = 0;
 
         do {
-            overdueTasksPage = taskRepository.findByDueDateBeforeAndStatusNot(
+            overdueTasksPage = taskRepository.findOverdueTasks(
                     today,
-                    Status.DONE,
                     PageRequest.of(page, pageSize)
             );
 
+            List<Task> tasksInPage = overdueTasksPage.getContent();
+            totalTasksProcessed += tasksInPage.size();
+
+            log.info("Processing overdue tasks page: {} with {} tasks (Total so far: {})",
+                    page, tasksInPage.size(), totalTasksProcessed);
+
+            log.debug("Processing overdue tasks page: {} with {} tasks", page, overdueTasksPage.getNumberOfElements());
+
+            if (log.isDebugEnabled()) {
+                int finalPage = page;
+                tasksInPage.forEach(task ->
+                        log.debug("Task in page {}: ID={}, Title='{}', DueDate={}, Status={}, DaysOverdue={}",
+                                finalPage,
+                                task.getId(),
+                                task.getTitle(),
+                                task.getDueDate(),
+                                task.getStatus(),
+                                task.getDueDate() != null ? ChronoUnit.DAYS.between(task.getDueDate(), today) : "N/A")
+                );
+            }
+
+            // If you want to see basic info at INFO level (be careful with production logs)
+            if (log.isInfoEnabled() && !tasksInPage.isEmpty()) {
+                log.info("Tasks in page {}: [{}]", page,
+                        tasksInPage.stream()
+                                .map(task -> String.format("ID=%s(Due:%s)",
+                                        task.getId().toString().substring(0, 8),
+                                        task.getDueDate()))
+                                .collect(java.util.stream.Collectors.joining(", ")));
+            }
+
             overdueTasksPage.getContent().forEach(this::checkAndNotifyIfOverdue);
+            log.info("Overdue tasks processed: {}", overdueTasksPage.getContent());
             page++;
         } while (overdueTasksPage.hasNext());
+
+        log.info("Completed overdue task check. Processed {} pages", page);
     }
 
-    private void checkAndNotifyIfOverdue(Task task) {
-        if (task.getDueDate() != null
-                && task.getDueDate().isBefore(LocalDate.now())
-                && task.getStatus() != Status.DONE) {
+    public void checkAndNotifyIfOverdue(Task task) {
+        log.info("Checking for overdue task {}", task.getId());
 
-            // Verify the task is still overdue (might have been updated concurrently)
-            boolean isStillOverdue = taskRepository.existsByIdAndDueDateBeforeAndStatusNot(
-                    task.getId(),
-                    LocalDate.now(),
-                    Status.DONE
-            );
+        try {
+            LocalDate lastNotified = lastNotificationSent.get(task.getId());
+            log.info("Last notification sent: {}", lastNotified);
+            LocalDate today = LocalDate.now();
+            log.info("Today: {}", today);
+            log.info("Task due date: {}", task.getDueDate());
 
-            if (isStillOverdue) {
-                int daysOverdue = Math.toIntExact(ChronoUnit.DAYS.between(task.getDueDate(), LocalDate.now()));
+            if (lastNotified == null || lastNotified.isBefore(today)) {
+                log.info("PUBLISHING EVENT for task {} (Due: {}, Status: {})",
+                        task.getId(), task.getDueDate(), task.getStatus());
+
+                int daysOverdue = Math.toIntExact(ChronoUnit.DAYS.between(
+                        task.getDueDate(),
+                        today));
+                log.info("Days overdue: {}", daysOverdue);
+
                 eventPublisher.publishEvent(new TaskOverdueEvent(task, daysOverdue));
+                lastNotificationSent.put(task.getId(), today);
+            } else {
+                log.debug("Notification already sent today for task {}", task.getId());
             }
+        } catch (Exception e) {
+            log.error("Failed to process task {}: {}", task.getId(), e.getMessage());
         }
-    }
-
-    @Transactional
-    public TaskResponse createTestOverdueTask(UUID projectId, UUID developerId) {
-        Task task = new Task();
-        task.setTitle("Test Overdue Task - " + LocalDateTime.now());
-        task.setDescription("This is a test task created for testing overdue notifications");
-        task.setDueDate(LocalDate.now().minusDays(2)); // 2 days overdue
-        task.setStatus(Status.IN_PROGRESS);
-        task.setPriority(Priority.HIGH);
-        task.setCreatedAt(LocalDateTime.now());
-        task.setUpdatedAt(LocalDateTime.now());
-
-        // Set project (you'll need to fetch it)
-        // task.setProject(projectService.getProjectEntityById(projectId));
-
-        // Set assignee if provided
-        if (developerId != null) {
-            Developer developer = developerService.getDeveloperEntityById(developerId);
-            task.setAssignee(developer);
-        }
-
-        return taskMapper.toResponse(taskRepository.save(task));
     }
 }

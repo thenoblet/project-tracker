@@ -6,6 +6,7 @@ import gtp.projecttracker.model.jpa.Task.Status;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 public record TaskResponse(
@@ -39,4 +40,12 @@ public record TaskResponse(
                 task.getUpdatedAt()
         );
     }
+
+    public long daysOverdue() {
+        if (dueDate == null || !dueDate.isBefore(LocalDate.now())) {
+            return 0;
+        }
+        return ChronoUnit.DAYS.between(dueDate, LocalDate.now());
+    }
+
 }

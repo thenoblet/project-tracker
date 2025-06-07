@@ -7,8 +7,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public record EmailProperties(
         String from,
         String replyTo,
+
         @DefaultValue("") String adminBcc
 ) {
-
-
 }
