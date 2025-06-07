@@ -55,7 +55,6 @@ public class EmailDetails {
         this.template = template;
     }
 
-    // toString() method
     @Override
     public String toString() {
         return "EmailDetails{" +
