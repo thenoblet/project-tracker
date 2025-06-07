@@ -70,12 +70,10 @@ public class AuditLoggingAspect {
                 AuditLog log = createBaseAuditLog();
                 log.setActionType(AuditLog.ActionType.DELETE);
 
-                // Extract entity type from method name or class
                 String methodName = joinPoint.getSignature().getName();
                 String entityType = extractEntityTypeFromMethodName(methodName);
                 log.setEntityType(entityType);
 
-                // Try to get ID from first argument
                 String entityId = extractEntityId(args[0]);
                 log.setEntityId(entityId);
 
@@ -88,12 +86,10 @@ public class AuditLoggingAspect {
 
     private AuditLog createBaseAuditLog() {
         AuditLog log = new AuditLog();
-        log.setActorName("system"); // Since no auth is needed
-        log.setTimestamp(Instant.now()); // Using Instant to match your service
+        log.setActorName("system");
+        log.setTimestamp(Instant.now());
         return log;
     }
-
-
 
     private String getEntityId(Object entity) {
         if (entity == null) {
@@ -101,7 +97,6 @@ public class AuditLoggingAspect {
         }
 
         try {
-            // Try common ID getter methods
             Method[] methods = entity.getClass().getDeclaredMethods();
             for (Method method : methods) {
                 if (method.getName().equals("getId") && method.getParameterCount() == 0) {
@@ -110,7 +105,6 @@ public class AuditLoggingAspect {
                 }
             }
 
-            // Fallback: try to find any method that returns an ID-like type
             for (Method method : methods) {
                 if (method.getName().toLowerCase().contains("id") &&
                         method.getParameterCount() == 0 &&
@@ -131,31 +125,25 @@ public class AuditLoggingAspect {
             return "unknown";
         }
 
-        // If it's already a string or number, use it directly
         if (arg instanceof String || arg instanceof Number) {
             return arg.toString();
         }
 
-        // Otherwise try to extract ID from the object
         return getEntityId(arg);
     }
 
     private String extractEntityTypeFromMethodName(String methodName) {
-        // Remove common prefixes
         String entityName = methodName;
         if (entityName.startsWith("delete")) {
-            entityName = entityName.substring(6); // Remove "delete"
+            entityName = entityName.substring(6);
         } else if (entityName.startsWith("remove")) {
-            entityName = entityName.substring(6); // Remove "remove"
+            entityName = entityName.substring(6);
         }
 
-        // Handle cases like "deleteById", "deleteByName", etc.
         if (entityName.startsWith("By")) {
-            // This might be a generic delete method, try to infer from class context
             return "Entity"; // Fallback
         }
 
-        // Capitalize first letter if needed
         if (!entityName.isEmpty()) {
             entityName = Character.toUpperCase(entityName.charAt(0)) + entityName.substring(1);
         }
