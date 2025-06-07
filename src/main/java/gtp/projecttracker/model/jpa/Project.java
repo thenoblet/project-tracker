@@ -8,7 +8,10 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
-@Table(name = "projects")
+@Table(name = "projects", indexes = {
+        @Index(name = "idx_project_status", columnList = "status"),
+        @Index(name = "idx_project_deadline", columnList = "deadline")
+})
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,14 +37,29 @@ public class Project {
     @Enumerated(EnumType.STRING)
     private ProjectStatus status = ProjectStatus.ACTIVE;
 
-    @NotBlank
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @NotNull
+    private LocalDateTime createdAt;
 
-    @NotBlank
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    @NotNull
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public boolean isValidDeadline() {
+        return deadline == null || startDate == null || !deadline.isBefore(startDate);
+    }
 
     public enum ProjectStatus {
         ACTIVE,
