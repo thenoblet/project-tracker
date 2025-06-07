@@ -112,7 +112,7 @@ erDiagram
 | GET    | `/api/v1/projects/{id}/tasks/overdue` | Get overdue tasks for project             | `id` (path), `pageable`                     |
 
 
-Visit [ALL API ENDPOINTS](docs/ENDPOINTS.md) to see the full list of all endpoints
+Visit [ALL API ENDPOINTS](gtp/docs/ENDPOINTS.md) to see the full list of all endpoints
 
 For complete API documentation, visit the Swagger UI at `http://localhost:8080/swagger-ui.html` when the application is running.
 
