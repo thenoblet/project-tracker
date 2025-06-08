@@ -8,7 +8,7 @@
 
 ## Overview
 
-The Project Tracker API is a comprehensive backend solution for BuildMaster, a rapidly growing startup that needs better visibility into team performance and project progress. This Spring Boot application provides robust project management capabilities with relational data persistence (using Spring Data JPA with H2/MySQL) and NoSQL integration (MongoDB for audit logs).
+The Project Tracker API is a comprehensive backend solution for BuildMaster, a rapidly growing startup that needs better visibility into team performance and project progress. This Spring Boot application provides robust project management capabilities with relational data persistence (using Spring Data JPA with PostgresSQL) and NoSQL integration (MongoDB for audit logs).
 
 ## Features
 
