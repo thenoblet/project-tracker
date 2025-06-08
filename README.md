@@ -26,28 +26,34 @@ erDiagram
     DEVELOPER }|--o{ TASK : "assigned to"
     
     PROJECT {
-        Long id PK
+        UUID id PK
         String name
         String description
         LocalDate deadline
         String status
+        LocalDateTime createdAt
+        LocalDateTime updatedAt
     }
     
     DEVELOPER {
-        Long id PK
+        UUID id PK
         String name
         String email
         String skills
+        LocalDateTime createdAt
+        LocalDateTime updatedAt
     }
     
     TASK {
-        Long id PK
+        UUID id PK
         String title
         String description
         String status
         LocalDate dueDate
         Long project_id FK
         Long developer_id FK
+        LocalDateTime createdAt
+        LocalDateTime updatedAt
     }
     
     AUDIT_LOG {
