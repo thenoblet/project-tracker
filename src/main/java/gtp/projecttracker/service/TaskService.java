@@ -218,7 +218,6 @@ public class TaskService {
                 );
             }
 
-            // If you want to see basic info at INFO level (be careful with production logs)
             if (log.isInfoEnabled() && !tasksInPage.isEmpty()) {
                 log.info("Tasks in page {}: [{}]", page,
                         tasksInPage.stream()
