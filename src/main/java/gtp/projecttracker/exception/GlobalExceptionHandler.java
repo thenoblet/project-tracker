@@ -1,6 +1,7 @@
 package gtp.projecttracker.exception;
 
 import gtp.projecttracker.dto.response.ErrorResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,13 +10,30 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final AuthExceptionHandler authExceptionHandler;
+
+    public GlobalExceptionHandler(AuthExceptionHandler authExceptionHandler) {
+        this.authExceptionHandler = authExceptionHandler;
+    }
+
+    @ExceptionHandler({
+            AccessDeniedException.class,
+            TokenValidationException.class,
+            EmailAlreadyExistsException.class
+    })
+    public ResponseEntity<ErrorResponse> handleSecurityExceptions(Exception ex, WebRequest request) {
+        return authExceptionHandler.handleSecurityException(ex, request);
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleResourceNotFound(
@@ -65,6 +83,23 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(
                         HttpStatus.CONFLICT.value(),
                         "DEVELOPER EXISTS",
+                        ex.getMessage(),
+                        request.getDescription(false)
+                ));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
+        Map<String, String> errors = ex.getConstraintViolations().stream()
+                .collect(Collectors.toMap(
+                        violation -> violation.getPropertyPath().toString(),
+                        violation -> violation.getMessage()
+                ));
+
+        return ResponseEntity.badRequest()
+                .body(ErrorResponse.of(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Validation failed",
                         ex.getMessage(),
                         request.getDescription(false)
                 ));
