@@ -9,16 +9,36 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * REST controller for testing email functionality.
+ * Provides endpoints for sending test emails with template parameters.
+ * Used primarily for development and testing purposes.
+ * All endpoints are accessible under the /api/v1/email path.
+ */
 @RestController
 @RequestMapping("api/v1/email")
 public class TestController {
 
     private final EmailService emailService;
 
+    /**
+     * Constructs a TestController with the required email service dependency.
+     *
+     * @param emailService The service for sending emails
+     */
     public TestController(EmailService emailService) {
         this.emailService = emailService;
     }
 
+    /**
+     * Sends a test email with predefined template parameters.
+     * If no recipient is provided, a default email address is used.
+     * The email uses the "task-overdue" template with sample task data.
+     *
+     * @param recipient Optional email recipient address
+     * @param templateParams Optional additional template parameters (not currently used)
+     * @return A response indicating the success or failure of the email sending operation
+     */
     @PostMapping("/send")
     public ResponseEntity<String> sendTestEmail(
             @RequestParam(required = false) String recipient,

@@ -4,10 +4,10 @@ import gtp.projecttracker.dto.request.task.CreateTaskRequest;
 import gtp.projecttracker.dto.request.task.UpdateTaskRequest;
 import gtp.projecttracker.dto.response.task.TaskResponse;
 import gtp.projecttracker.model.jpa.Task;
-import gtp.projecttracker.model.jpa.Developer;
 import gtp.projecttracker.model.jpa.Project;
 
 
+import gtp.projecttracker.model.jpa.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -63,7 +63,7 @@ public class TaskMapper {
         }
 
         if (request.assigneeId() != null) {
-            Developer assignee = new Developer();
+            User assignee = new User();
             assignee.setId(request.assigneeId());
             task.setAssignee(assignee);
         }
@@ -99,7 +99,7 @@ public class TaskMapper {
         if (request.assigneeId().isPresent()) {
             UUID assigneeId = request.assigneeId().get(); // Fixed: was missing .get()
             if (assigneeId != null) {
-                Developer assignee = new Developer();
+                User assignee = new User();
                 assignee.setId(assigneeId);
                 existingTask.setAssignee(assignee);
             } else {
