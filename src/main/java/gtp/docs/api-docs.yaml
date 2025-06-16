@@ -1,0 +1,1209 @@
+openapi: 3.1.0
+info:
+  title: BuildMaster Project Tracker API
+  description: "API for managing projects, tasks and developers"
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: v1.0
+servers:
+- url: http://localhost:8080
+  description: Local development server
+paths:
+  /api/v1/tasks/{id}:
+    get:
+      tags:
+      - task-controller
+      operationId: getTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+    put:
+      tags:
+      - task-controller
+      operationId: updateTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+    delete:
+      tags:
+      - task-controller
+      operationId: deleteTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+      - task-controller
+      operationId: patchTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+  /api/v1/projects/{id}:
+    get:
+      tags:
+      - project-controller
+      operationId: getProjectById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+    put:
+      tags:
+      - project-controller
+      operationId: updateProject
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+    delete:
+      tags:
+      - project-controller
+      operationId: deleteProject
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+      - project-controller
+      operationId: patchProject
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+  /api/v1/developers/{id}:
+    get:
+      tags:
+      - developer-controller
+      operationId: getDeveloperById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DeveloperResponse"
+    put:
+      tags:
+      - developer-controller
+      operationId: updateDeveloper
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDeveloperRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DeveloperResponse"
+    delete:
+      tags:
+      - developer-controller
+      operationId: deleteDeveloper
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+      - developer-controller
+      operationId: patchDeveloper
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDeveloperRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DeveloperResponse"
+  /api/v1/tasks:
+    get:
+      tags:
+      - task-controller
+      operationId: getAllTasks
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageTaskResponse"
+    post:
+      tags:
+      - task-controller
+      operationId: createTask
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+  /api/v1/tasks/{id}/assign:
+    post:
+      tags:
+      - task-controller
+      operationId: assignTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignTaskRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+  /api/v1/projects:
+    get:
+      tags:
+      - project-controller
+      operationId: getAllProjects
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      - name: includeTasks
+        in: query
+        required: true
+        schema:
+          type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageProjectSummaryResponse"
+    post:
+      tags:
+      - project-controller
+      operationId: createProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+  /api/v1/email/send:
+    post:
+      tags:
+      - test-controller
+      operationId: sendTestEmail
+      parameters:
+      - name: recipient
+        in: query
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: {}
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/v1/developers:
+    get:
+      tags:
+      - developer-controller
+      operationId: getAllDevelopers
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageDeveloperResponse"
+    post:
+      tags:
+      - developer-controller
+      operationId: createDeveloper
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDeveloperRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DeveloperResponse"
+  /api/v1/projects/{id}/status:
+    patch:
+      tags:
+      - project-controller
+      operationId: updateProjectStatus
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: status
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - ACTIVE
+          - IN_PROGRESS
+          - BLOCKED
+          - ON_HOLD
+          - IN_REVIEW
+          - COMPLETED
+          - CANCELLED
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+  /api/v1/tasks/test-publish:
+    get:
+      tags:
+      - task-controller
+      operationId: testPublish
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/v1/tasks/overdue:
+    get:
+      tags:
+      - task-controller
+      operationId: getOverdueTasks
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageTaskResponse"
+  /api/v1/projects/{id}/tasks:
+    get:
+      tags:
+      - project-controller
+      operationId: getProjectTasks
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - TODO
+          - ASSIGNED
+          - APPROVED
+          - IN_PROGRESS
+          - DONE
+          - BLOCKED
+      - name: assigneeName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: dueDateFrom
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: dueDateTo
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageTaskResponse"
+  /api/v1/projects/{id}/tasks/overdue:
+    get:
+      tags:
+      - project-controller
+      operationId: getProjectOverdueTasks
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageTaskResponse"
+  /api/v1/developers/top:
+    get:
+      tags:
+      - developer-controller
+      operationId: getTopDevelopers
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DeveloperResponse"
+  /api/v1/developers/search:
+    get:
+      tags:
+      - developer-controller
+      operationId: searchDevelopers
+      parameters:
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: email
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: skill
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageDeveloperResponse"
+  /api/audit-logs:
+    get:
+      tags:
+      - audit-log-controller
+      operationId: getAllAuditLogs
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageAuditLog"
+  /api/audit-logs/entity/{entityType}:
+    get:
+      tags:
+      - audit-log-controller
+      operationId: getLogsByEntityType
+      parameters:
+      - name: entityType
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLog"
+  /api/audit-logs/date-range:
+    get:
+      tags:
+      - audit-log-controller
+      operationId: getLogsByDateRange
+      parameters:
+      - name: start
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: end
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLog"
+  /api/audit-logs/actor/{actorName}:
+    get:
+      tags:
+      - audit-log-controller
+      operationId: getLogsByActor
+      parameters:
+      - name: actorName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLog"
+components:
+  schemas:
+    UpdateTaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          minLength: 2
+        description:
+          type: string
+          maxLength: 500
+          minLength: 0
+        status:
+          type: string
+          enum:
+          - TODO
+          - ASSIGNED
+          - APPROVED
+          - IN_PROGRESS
+          - DONE
+          - BLOCKED
+        priority:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        dueDate:
+          type: string
+          format: date
+        projectId:
+          type: string
+          format: uuid
+        assigneeId:
+          type: string
+          format: uuid
+    TaskResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - TODO
+          - ASSIGNED
+          - APPROVED
+          - IN_PROGRESS
+          - DONE
+          - BLOCKED
+        priority:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        dueDate:
+          type: string
+          format: date
+        projectId:
+          type: string
+          format: uuid
+        projectName:
+          type: string
+        assigneeId:
+          type: string
+          format: uuid
+        assigneeName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UpdateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+          format: date
+        deadline:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - IN_PROGRESS
+          - BLOCKED
+          - ON_HOLD
+          - IN_REVIEW
+          - COMPLETED
+          - CANCELLED
+    ProjectResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        deadline:
+          type: string
+          format: date
+        startDate:
+          type: string
+          format: date
+        status:
+          type: string
+        taskCount:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UpdateDeveloperRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+    DeveloperResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        taskCount:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateTaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          minLength: 2
+        description:
+          type: string
+          maxLength: 500
+          minLength: 0
+        dueDate:
+          type: string
+          format: date
+        projectId:
+          type: string
+          format: uuid
+        assigneeId:
+          type: string
+          format: uuid
+        priority:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        status:
+          type: string
+          enum:
+          - TODO
+          - ASSIGNED
+          - APPROVED
+          - IN_PROGRESS
+          - DONE
+          - BLOCKED
+      required:
+      - dueDate
+      - title
+    AssignTaskRequest:
+      type: object
+      properties:
+        developerId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - TODO
+          - ASSIGNED
+          - APPROVED
+          - IN_PROGRESS
+          - DONE
+          - BLOCKED
+        priority:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+      required:
+      - developerId
+      - priority
+      - status
+    CreateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 2
+        description:
+          type: string
+          maxLength: 500
+          minLength: 2
+        startDate:
+          type: string
+          format: date
+        deadline:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - IN_PROGRESS
+          - BLOCKED
+          - ON_HOLD
+          - IN_REVIEW
+          - COMPLETED
+          - CANCELLED
+      required:
+      - deadline
+      - name
+      - startDate
+    CreateDeveloperRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 50
+          minLength: 2
+        email:
+          type: string
+          maxLength: 150
+          minLength: 0
+        skills:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+            minLength: 2
+          uniqueItems: true
+      required:
+      - email
+      - name
+    Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          minimum: 1
+        sort:
+          type: array
+          items:
+            type: string
+    PageTaskResponse:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/TaskResponse"
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        paged:
+          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    PageProjectSummaryResponse:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectSummaryResponse"
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: boolean
+    ProjectSummaryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+          format: date
+        deadline:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - IN_PROGRESS
+          - BLOCKED
+          - ON_HOLD
+          - IN_REVIEW
+          - COMPLETED
+          - CANCELLED
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        taskCount:
+          type: integer
+          format: int64
+    PageDeveloperResponse:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeveloperResponse"
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: boolean
+    AuditLog:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/ObjectId"
+        actionType:
+          type: string
+          enum:
+          - CREATE
+          - UPDATE
+          - DELETE
+        entityType:
+          type: string
+        entityId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        actorName:
+          type: string
+        payload:
+          type: object
+    ObjectId:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int32
+        date:
+          type: string
+          format: date-time
+    PageAuditLog:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLog"
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: boolean

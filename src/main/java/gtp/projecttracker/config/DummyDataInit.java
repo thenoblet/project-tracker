@@ -12,18 +12,34 @@ import org.springframework.context.annotation.DependsOn;
 
 import java.time.LocalDate;
 
-
+/**
+ * Configuration class for initializing sample data in the application.
+ * Creates dummy tasks for testing and development purposes when the application starts.
+ * Only initializes data if the database is empty to avoid duplicate entries.
+ */
 @Configuration
 @DependsOn("entityManagerFactory")
 public class DummyDataInit {
     private final TaskRepository taskRepository;
     private final TaskService taskService;
 
+    /**
+     * Constructs a new DummyDataInit with required dependencies.
+     *
+     * @param taskRepository Repository for accessing task data
+     * @param taskService Service for task operations including saving with proper event handling
+     */
     public DummyDataInit(TaskRepository taskRepository, TaskService taskService) {
         this.taskRepository = taskRepository;
         this.taskService = taskService;
     }
 
+    /**
+     * Initializes the application with sample task data.
+     * This method is automatically called after the bean is constructed.
+     * Creates 5 sample tasks with different statuses, priorities, and due dates,
+     * but only if the database is empty to prevent duplicate entries.
+     */
     @PostConstruct
     public void init() {
         // Check if data already exists to avoid duplicates

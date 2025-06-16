@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+
 @SpringBootApplication
 @EnableCaching
 @EnableMongoAuditing
@@ -18,9 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableConfigurationProperties(EmailProperties.class)
 @EnableScheduling
 public class ProjectTracker {
-
     public static void main(String[] args) {
         SpringApplication.run(ProjectTracker.class, args);
     }
-
 }

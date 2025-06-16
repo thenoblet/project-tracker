@@ -7,12 +7,13 @@ import gtp.projecttracker.dto.response.task.TaskResponse;
 import gtp.projecttracker.event.TaskOverdueEvent;
 import gtp.projecttracker.exception.ResourceNotFoundException;
 import gtp.projecttracker.mapper.TaskMapper;
-import gtp.projecttracker.model.jpa.Developer;
 import gtp.projecttracker.model.jpa.Task;
 import gtp.projecttracker.model.jpa.Task.Status;
 import gtp.projecttracker.model.jpa.Task.Priority;
+import gtp.projecttracker.model.jpa.User;
 import gtp.projecttracker.repository.jpa.TaskRepository;
 
+import gtp.projecttracker.security.util.SecurityUtil;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,21 +39,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
-    private final DeveloperService developerService;
     private final ApplicationEventPublisher eventPublisher;
     private final Map<UUID, LocalDate> lastNotificationSent = new ConcurrentHashMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(TaskService.class);
+    private final SecurityUtil securityUtil;
 
     @Autowired
     public TaskService(TaskRepository taskRepository,
                        TaskMapper taskMapper,
-                       DeveloperService developerService,
-                       ApplicationEventPublisher eventPublisher) {
+                       ApplicationEventPublisher eventPublisher, SecurityUtil securityUtil) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
-        this.developerService = developerService;
         this.eventPublisher = eventPublisher;
+        this.securityUtil = securityUtil;
     }
 
     public Page<TaskResponse> getTasks(Pageable pageable) {
@@ -65,17 +66,6 @@ public class TaskService {
         }
         return taskRepository.findByProjectId(projectId, pageable)
                 .map(taskMapper::toResponse);
-    }
-
-    
-
-    public List<TaskResponse> getTasksByDeveloperId(UUID developerId) {
-        if (!developerService.existsById(developerId)) {
-            throw new ResourceNotFoundException("Developer not found with id: " + developerId);
-        }
-        return taskMapper.toResponseList(
-                taskRepository.findByAssigneeId(developerId)
-        );
     }
 
     public List<Object[]> getTaskCountByDeveloper() {
@@ -101,6 +91,14 @@ public class TaskService {
     @Transactional
     public TaskResponse updateTask(UUID taskId, UpdateTaskRequest request) {
         Task existingTask = getTaskEntityById(taskId);
+        if  (existingTask == null) {
+            throw new ResourceNotFoundException("Task not found with id: " + taskId);
+        }
+
+        if (!securityUtil.isTaskOwner(taskId) && !securityUtil.isAdmin()) {
+            throw new AccessDeniedException("You are not allowed to perform this action.");
+        }
+
         taskMapper.updateEntity(existingTask, request);
         existingTask.setUpdatedAt(LocalDateTime.now());
         return taskMapper.toResponse(taskRepository.save(existingTask));
@@ -109,6 +107,13 @@ public class TaskService {
     @Transactional
     public TaskResponse patchTask(UUID taskId, UpdateTaskRequest request) {
         Task existingTask = getTaskEntityById(taskId);
+        if  (existingTask == null) {
+            throw new ResourceNotFoundException("Task not found with id: " + taskId);
+        }
+
+        if (!securityUtil.isTaskOwner(taskId) && !securityUtil.isAdmin()) {
+            throw new AccessDeniedException("You are not allowed to perform this action.");
+        }
 
         request.title().ifPresent(existingTask::setTitle);
         request.description().ifPresent(existingTask::setDescription);
@@ -122,18 +127,33 @@ public class TaskService {
 
     @Transactional
     public void deleteTask(UUID id) {
-        if (!taskRepository.existsById(id)) {
+        Task task = getTaskEntityById(id);
+        if (task == null) {
             throw new ResourceNotFoundException("Task not found with id: " + id);
         }
+
+        boolean isOwner = securityUtil.isTaskOwner(id);
+        boolean isAdmin = securityUtil.isAdmin();
+
+        log.info("Security check - isOwner: {}, isAdmin: {}", isOwner, isAdmin);
+
+        if (securityUtil.isTaskOwner(id) && !securityUtil.isAdminOrManager()) {
+            throw new AccessDeniedException("You are not allowed to delete this task.");
+        }
+
         taskRepository.deleteById(id);
     }
 
     @Transactional
     public TaskResponse assignTask(UUID taskId, AssignTaskRequest request) throws BadRequestException {
-        Task task = getTaskEntityById(taskId);
-        Developer developer = developerService.getDeveloperEntityById(request.developerId());
+        if (!securityUtil.isAdmin()) {
+            throw new AccessDeniedException("Only admins can assign tasks.");
+        }
 
-        task.setAssignee(developer);
+        Task task = getTaskEntityById(taskId);
+        //User user = developerService.getDeveloperEntityById(request.developerId());
+
+        //task.setAssignee(developer);
         task.setStatus(Status.valueOf(request.status().name()));
         task.setPriority(Priority.valueOf(request.priority().name()));
         task.setUpdatedAt(LocalDateTime.now());
@@ -183,7 +203,6 @@ public class TaskService {
     @Scheduled(fixedDelayString = "${app.notifications.overdue-check-interval:5000}")
     @Transactional
     public void checkAndNotifyOverdueTasks() {
-        log.info("Checking for overdue tasks at {}", LocalDateTime.now());
 
         LocalDate today = LocalDate.now();
         Page<Task> overdueTasksPage;
@@ -197,43 +216,9 @@ public class TaskService {
                     PageRequest.of(page, pageSize)
             );
 
-            List<Task> tasksInPage = overdueTasksPage.getContent();
-            totalTasksProcessed += tasksInPage.size();
-
-            log.info("Processing overdue tasks page: {} with {} tasks (Total so far: {})",
-                    page, tasksInPage.size(), totalTasksProcessed);
-
-            log.debug("Processing overdue tasks page: {} with {} tasks", page, overdueTasksPage.getNumberOfElements());
-
-            if (log.isDebugEnabled()) {
-                int finalPage = page;
-                tasksInPage.forEach(task ->
-                        log.debug("Task in page {}: ID={}, Title='{}', DueDate={}, Status={}, DaysOverdue={}",
-                                finalPage,
-                                task.getId(),
-                                task.getTitle(),
-                                task.getDueDate(),
-                                task.getStatus(),
-                                task.getDueDate() != null ? ChronoUnit.DAYS.between(task.getDueDate(), today) : "N/A")
-                );
-            }
-
-            // If you want to see basic info at INFO level (be careful with production logs)
-            if (log.isInfoEnabled() && !tasksInPage.isEmpty()) {
-                log.info("Tasks in page {}: [{}]", page,
-                        tasksInPage.stream()
-                                .map(task -> String.format("ID=%s(Due:%s)",
-                                        task.getId().toString().substring(0, 8),
-                                        task.getDueDate()))
-                                .collect(java.util.stream.Collectors.joining(", ")));
-            }
-
             overdueTasksPage.getContent().forEach(this::checkAndNotifyIfOverdue);
-            log.info("Overdue tasks processed: {}", overdueTasksPage.getContent());
             page++;
         } while (overdueTasksPage.hasNext());
-
-        log.info("Completed overdue task check. Processed {} pages", page);
     }
 
     public void checkAndNotifyIfOverdue(Task task) {
