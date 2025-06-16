@@ -8,7 +8,7 @@
 
 ## Overview
 
-The Project Tracker API is a comprehensive backend solution for BuildMaster, a rapidly growing startup that needs better visibility into team performance and project progress. This Spring Boot application provides robust project management capabilities with relational data persistence (using Spring Data JPA with H2/MySQL) and NoSQL integration (MongoDB for audit logs).
+The Project Tracker API is a comprehensive backend solution for BuildMaster, a rapidly growing startup that needs better visibility into team performance and project progress. This Spring Boot application provides robust project management capabilities with relational data persistence (using Spring Data JPA with PostgresSQL) and NoSQL integration (MongoDB for audit logs).
 
 ## Features
 
@@ -26,28 +26,34 @@ erDiagram
     DEVELOPER }|--o{ TASK : "assigned to"
     
     PROJECT {
-        Long id PK
+        UUID id PK
         String name
         String description
         LocalDate deadline
         String status
+        LocalDateTime createdAt
+        LocalDateTime updatedAt
     }
     
     DEVELOPER {
-        Long id PK
+        UUID id PK
         String name
         String email
         String skills
+        LocalDateTime createdAt
+        LocalDateTime updatedAt
     }
     
     TASK {
-        Long id PK
+        UUID id PK
         String title
         String description
         String status
         LocalDate dueDate
         Long project_id FK
         Long developer_id FK
+        LocalDateTime createdAt
+        LocalDateTime updatedAt
     }
     
     AUDIT_LOG {
@@ -112,7 +118,7 @@ erDiagram
 | GET    | `/api/v1/projects/{id}/tasks/overdue` | Get overdue tasks for project             | `id` (path), `pageable`                     |
 
 
-Visit [ALL API ENDPOINTS](docs/ENDPOINTS.md) to see the full list of all endpoints
+Visit [ALL API ENDPOINTS](src/main/java/gtp/docs/ENDPOINTS.md) to see the full list of all endpoints
 
 For complete API documentation, visit the Swagger UI at `http://localhost:8080/swagger-ui.html` when the application is running.
 
