@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record AssignTaskRequest(
-        @NotNull(message = "Developer ID is required")
-        UUID developerId,
+        @NotNull(message = "User ID is required")
+        UUID userId,
 
         @NotNull(message = "Task status is required")
         Status status,

@@ -6,8 +6,6 @@ import gtp.projecttracker.dto.request.task.UpdateTaskRequest;
 import gtp.projecttracker.dto.response.task.TaskResponse;
 import gtp.projecttracker.mapper.TaskMapper;
 import gtp.projecttracker.model.jpa.Task;
-import gtp.projecttracker.repository.jpa.TaskRepository;
-import gtp.projecttracker.security.jwt.JwtAuthFilter;
 import gtp.projecttracker.service.TaskService;
 
 import jakarta.validation.Valid;

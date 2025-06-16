@@ -53,7 +53,6 @@ public class User {
 
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-
     public enum Role {
         ROLE_ADMIN,
         ROLE_MANAGER,
@@ -68,6 +67,21 @@ public class User {
 
     public User(String email, String password, Role role) {
         this();
+        this.email = email;
+        this.password = password;
+        setRole(role);
+    }
+
+    public User(String name, String email, String password) {
+        this();
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public User(String name, String email, String password, Role role) {
+        this();
+        this.name = name;
         this.email = email;
         this.password = password;
         setRole(role);
