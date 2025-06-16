@@ -35,6 +35,18 @@ public record ErrorResponse(
         );
     }
 
+    public static ErrorResponse of(int status, String error, String message, String path, Map<String, Object> details) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                status,
+                error,
+                message,
+                path,
+                null,
+                null
+        );
+    }
+
     public static ErrorResponse withValidationErrors(int status, String error, String message,
                                                      String path, List<ValidationError> validationErrors) {
         return new ErrorResponse(

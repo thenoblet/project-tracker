@@ -30,7 +30,7 @@ public class SwaggerConfig {
                         .url("http://localhost:8080")
                         .description("Local development server"))
                 .info(new Info()
-                        .title("BuildMaster Project Tracker API")
+                        .title("BuildMaster Project Tracker")
                         .description("API for managing projects, tasks and developers")
                         .version("v1.0")
                         .license(new License()

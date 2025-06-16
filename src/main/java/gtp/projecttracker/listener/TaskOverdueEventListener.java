@@ -2,8 +2,8 @@ package gtp.projecttracker.listener;
 
 import gtp.projecttracker.event.TaskOverdueEvent;
 import gtp.projecttracker.exception.EmailException;
-import gtp.projecttracker.model.jpa.Developer;
 import gtp.projecttracker.model.jpa.Task;
+import gtp.projecttracker.model.jpa.User;
 import gtp.projecttracker.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class TaskOverdueEventListener {
     private final EmailService emailService;
 
     public TaskOverdueEventListener(EmailService emailService) {
-        logger.info("EmailService is {}null", emailService == null ? "" : "NOT ");
+        logger.info("EmailService is {} null", emailService == null ? "" : "NOT ");
         this.emailService = emailService;
         logger.info("TaskOverdueEventListener initialized!");
     }
@@ -36,7 +36,7 @@ public class TaskOverdueEventListener {
         Task task = event.task();
         logger.debug("Processing overdue task: {}", task.getTitle());
 
-        Developer assignee = task.getAssignee();
+        User assignee = task.getAssignee();
         if (assignee == null || assignee.getEmail() == null) {
             logger.warn("Task {} is overdue but has no assignee with email", task.getTitle());
             return;

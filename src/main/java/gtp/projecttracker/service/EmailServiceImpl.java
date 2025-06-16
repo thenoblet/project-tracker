@@ -74,7 +74,6 @@ public class EmailServiceImpl implements EmailService {
         try {
             Context thymeleafContext = new Context();
 
-            // Improved context handling
             if (context instanceof Map<?, ?> map) {
                 map.forEach((key, value) ->
                         thymeleafContext.setVariable(key.toString(), value)
