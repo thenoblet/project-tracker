@@ -1,4 +1,5 @@
-## API Endpoints Reference
+# API Endpoints Reference
+
 
 ### Projects
 
@@ -45,10 +46,10 @@
 
 | Method | Endpoint                          | Description                                  | Parameters/Request Body                     |
 |--------|-----------------------------------|----------------------------------------------|---------------------------------------------|
-| GET    | `/api/audit-logs`                 | Get paginated audit logs                     | `pageable` (query)                          |
-| GET    | `/api/audit-logs/entity/{entityType}` | Get logs by entity type                  | `entityType` (path)                         |
-| GET    | `/api/audit-logs/date-range`      | Get logs within date range                   | `start`, `end` (query - date-time)          |
-| GET    | `/api/audit-logs/actor/{actorName}` | Get logs by actor name                    | `actorName` (path)                          |
+| GET    | `/api/v1/logs`                 | Get paginated audit logs                     | `pageable` (query)                          |
+| GET    | `/api/v1/logs/entity/{entityType}` | Get logs by entity type                  | `entityType` (path)                         |
+| GET    | `/api/v1/logs/date-range`      | Get logs within date range                   | `start`, `end` (query - date-time)          |
+| GET    | `/api/v1/logs/actor/{actorName}` | Get logs by actor name                    | `actorName` (path)                          |
 
 ### Other
 
