@@ -29,6 +29,7 @@ public class AuditLogController {
     @Autowired
     public AuditLogController(AuditService auditService) {
         this.auditService = auditService;
+
     }
 
     /**

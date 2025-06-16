@@ -30,7 +30,6 @@ public class AuditLog {
     private String payload;
 
     // Security-specific fields
-    private String username;
     private String ipAddress;
     private String userAgent;
     private String endpoint;
@@ -47,6 +46,7 @@ public class AuditLog {
         LOGIN_FAILURE,
         LOGOUT,
         ACCESS_DENIED,
+        REGISTRATION_SUCCESS,
         REGISTRATION_FAILURE,
         INVALID_TOKEN
     }
@@ -180,15 +180,6 @@ public class AuditLog {
      */
     public void setPayload(String payload) {
         this.payload = payload;
-    }
-
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getIpAddress() {

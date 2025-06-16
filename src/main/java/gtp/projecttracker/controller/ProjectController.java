@@ -57,7 +57,7 @@ public class ProjectController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ProjectResponse> createProject(
             @Valid @RequestBody CreateProjectRequest request) {
-        ProjectResponse response = projectService.createProject(request);
+        ProjectResponse response = projectService.saveProject(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

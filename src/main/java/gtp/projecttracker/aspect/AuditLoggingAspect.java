@@ -3,7 +3,10 @@ package gtp.projecttracker.aspect;
 import gtp.projecttracker.model.mongodb.AuditLog;
 import gtp.projecttracker.repository.mongodb.AuditLogRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,6 +73,7 @@ public class AuditLoggingAspect {
                 log.setEntityType(result.getClass().getSimpleName());
                 log.setEntityId(getEntityId(result));
                 log.setPayload(convertToJson(result));
+
                 auditLogRepository.save(log);
             } catch (Exception e) {
                 logger.error("Failed to log CREATE audit event", e);
@@ -142,8 +146,9 @@ public class AuditLoggingAspect {
      * @return A new AuditLog instance with common properties initialized
      */
     private AuditLog createBaseAuditLog() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         AuditLog log = new AuditLog();
-        log.setActorName("system");
+        log.setActorName(auth.getName());
         log.setTimestamp(Instant.now());
         return log;
     }

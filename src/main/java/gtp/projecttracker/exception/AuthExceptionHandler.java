@@ -111,7 +111,7 @@ public class AuthExceptionHandler {
         AuditLog log = new AuditLog();
         log.setActionType(actionType);
         log.setTimestamp(Instant.now());
-        log.setUsername(auth != null ? auth.getName() : "anonymous");
+        log.setActorName(auth != null ? auth.getName() : "anonymous");
         log.setIpAddress(request.getRemoteAddr());
         log.setUserAgent(request.getHeader("User-Agent"));
         log.setEndpoint(request.getRequestURI());

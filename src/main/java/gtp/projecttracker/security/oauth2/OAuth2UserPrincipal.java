@@ -4,7 +4,6 @@ import gtp.projecttracker.model.jpa.User;
 
 import gtp.projecttracker.security.service.UserDetailsImpl;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
