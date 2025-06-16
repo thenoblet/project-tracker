@@ -2,7 +2,6 @@ package gtp.projecttracker.repository.jpa;
 
 import gtp.projecttracker.model.jpa.Task;
 import gtp.projecttracker.model.jpa.Task.Status;
-import gtp.projecttracker.dto.response.developer.DeveloperResponse;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
@@ -25,8 +24,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID>, JpaSpecificat
     @Query("SELECT t FROM Task t LEFT JOIN FETCH t.assignee WHERE t.dueDate <= :currentDate and t.status <> 'DONE'")
     Page<Task> findOverdueTasks(@Param("currentDate") LocalDate currentDate, Pageable pageable);
 
-    @Query("SELECT t FROM Task t WHERE t.assignee.id = :developerId")
-    List<Task> findByDeveloperId(@Param("developerId") UUID developerId);
+    @Query("SELECT t FROM Task t WHERE t.assignee.id = :userId")
+    List<Task> findByUserId(@Param("userId") UUID userId);
 
     Task findTaskById(UUID taskId);
 
@@ -35,8 +34,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID>, JpaSpecificat
     void deleteByProjectId(@Param("projectId") UUID projectId);
 
     @Modifying
-    @Query("UPDATE Task t SET t.assignee = NULL WHERE t.assignee.id = :developerId")
-    void unassignTasksFromDeveloper(@Param("developerId") UUID developerId);
+    @Query("UPDATE Task t SET t.assignee = NULL WHERE t.assignee.id = :userId")
+    void unassignTasksFromUser(@Param("userId") UUID userId);
 
     Page<Task> findByDueDateBeforeAndStatusNot(
             @NotNull LocalDate dueDate,
@@ -46,7 +45,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID>, JpaSpecificat
     List<Task> findByAssigneeId(UUID developerId);
 
     @Query("SELECT t.assignee.id, COUNT(t) FROM Task t GROUP BY t.assignee.id ORDER BY COUNT(t) DESC")
-    List<Object[]> countTasksByDeveloper();
+    List<Object[]> countTasksByUser();
 
     boolean existsByProjectId(UUID projectId);
 
