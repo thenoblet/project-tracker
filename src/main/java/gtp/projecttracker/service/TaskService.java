@@ -32,12 +32,14 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class TaskService {
     private final TaskRepository taskRepository;
+    private final UserService userService;
     private final TaskMapper taskMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final Map<UUID, LocalDate> lastNotificationSent = new ConcurrentHashMap<>();
@@ -47,9 +49,11 @@ public class TaskService {
 
     @Autowired
     public TaskService(TaskRepository taskRepository,
+                       UserService userService,
                        TaskMapper taskMapper,
                        ApplicationEventPublisher eventPublisher, SecurityUtil securityUtil) {
         this.taskRepository = taskRepository;
+        this.userService = userService;
         this.taskMapper = taskMapper;
         this.eventPublisher = eventPublisher;
         this.securityUtil = securityUtil;
@@ -68,8 +72,8 @@ public class TaskService {
                 .map(taskMapper::toResponse);
     }
 
-    public List<Object[]> getTaskCountByDeveloper() {
-        return taskRepository.countTasksByDeveloper();
+    public List<Object[]> getTaskCountByUser() {
+        return taskRepository.countTasksByUser();
     }
 
     public TaskResponse getTaskById(UUID taskId) {
@@ -151,9 +155,10 @@ public class TaskService {
         }
 
         Task task = getTaskEntityById(taskId);
-        //User user = developerService.getDeveloperEntityById(request.developerId());
+        User assignee = userService.getUserById(request.userId())
+                .orElseThrow(() -> new BadRequestException("User not found with ID: " + request.userId()));
 
-        //task.setAssignee(developer);
+        task.setAssignee(assignee);
         task.setStatus(Status.valueOf(request.status().name()));
         task.setPriority(Priority.valueOf(request.priority().name()));
         task.setUpdatedAt(LocalDateTime.now());
@@ -166,8 +171,8 @@ public class TaskService {
     }
 
     @Transactional
-    public void unassignAllTasksFromDeveloper(UUID developerId) {
-        taskRepository.unassignTasksFromDeveloper(developerId);
+    public void unassignAllTasksFromUser(UUID developerId) {
+        taskRepository.unassignTasksFromUser(developerId);
     }
 
     public boolean existsById(UUID taskId) {

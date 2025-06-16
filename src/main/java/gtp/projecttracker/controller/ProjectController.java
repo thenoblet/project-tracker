@@ -54,7 +54,7 @@ public class ProjectController {
      * @return The created project wrapped in a ResponseEntity with HTTP 201 status
      */
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ProjectResponse> createProject(
             @Valid @RequestBody CreateProjectRequest request) {
         ProjectResponse response = projectService.createProject(request);
@@ -81,7 +81,7 @@ public class ProjectController {
      * @return A paginated list of project summaries wrapped in a ResponseEntity
      */
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<Page<ProjectSummaryResponse>> getAllProjects(
             Pageable pageable,
             boolean includeTasks) {
@@ -96,7 +96,7 @@ public class ProjectController {
      * @return The updated project wrapped in a ResponseEntity
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ProjectResponse> updateProject(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateProjectRequest request) {
@@ -111,7 +111,7 @@ public class ProjectController {
      * @return The updated project wrapped in a ResponseEntity
      */
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ProjectResponse> patchProject(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateProjectRequest request){
@@ -126,7 +126,7 @@ public class ProjectController {
      * @return The updated project wrapped in a ResponseEntity
      */
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ProjectResponse> updateProjectStatus(
             @PathVariable UUID id,
             @RequestParam Project.ProjectStatus status) {
@@ -140,7 +140,7 @@ public class ProjectController {
      * @return A ResponseEntity with HTTP 204 No Content status
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<Void> deleteProject(
             @PathVariable UUID id) {
         projectService.deleteProject(id);
