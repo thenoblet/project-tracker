@@ -15,6 +15,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+/**
+ * Custom implementation of OAuth2 user service that handles both OIDC and standard OAuth2 user authentication.
+ *
+ * <p>This service extends {@link DefaultOAuth2UserService} to provide custom user loading and registration
+ * functionality for OAuth2 authentication flows. It handles:</p>
+ * <ul>
+ *   <li>Loading user details from OAuth2 providers</li>
+ *   <li>Converting provider-specific user attributes to application user principal</li>
+ *   <li>Automatically registering new users on first login</li>
+ *   <li>Supporting both OIDC (OpenID Connect) and standard OAuth2 providers</li>
+ * </ul>
+ *
+ * <p>New users are automatically registered with {@link Role#ROLE_CONTRACTOR} role by default.</p>
+ *
+ * @see DefaultOAuth2UserService
+ * @see OidcUserService
+ */
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
@@ -24,6 +41,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Loads user information from the OAuth2 provider.
+     *
+     * <p>This method determines whether the request is an OIDC request and delegates to the appropriate
+     * handler method. Supports both OpenID Connect and standard OAuth2 providers.</p>
+     *
+     * @param request the OAuth2 user request containing access token and client information
+     * @return OAuth2UserPrincipal containing both user details and OAuth2 attributes
+     * @throws OAuth2AuthenticationException if user loading fails
+     */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest request) throws OAuth2AuthenticationException {
         if (request instanceof OidcUserRequest) {
@@ -32,6 +59,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return loadOAuth2User(request);
     }
 
+    /**
+     * Handles loading of OpenID Connect (OIDC) user information.
+     *
+     * @param request the OIDC user request
+     * @return OAuth2UserPrincipal containing user details and OIDC attributes
+     */
     private OAuth2UserPrincipal loadOidcUser(OidcUserRequest request) {
         OidcUser oidcUser = oidcUserService.loadUser(request);
         return convertToPrincipal(oidcUser.getEmail(), oidcUser.getAttributes());
@@ -42,6 +75,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return convertToPrincipal(oauth2User.getAttribute("email"), oauth2User.getAttributes());
     }
 
+    /**
+     * Converts OAuth2 provider attributes to application user principal.
+     *
+     * <p>If the user doesn't exist in the local database, a new user record is automatically created.</p>
+     *
+     * @param email the user's email address from the OAuth2 provider
+     * @param attributes the complete set of attributes from the OAuth2 provider
+     * @return OAuth2UserPrincipal combining local user details and OAuth2 attributes
+     */
     private OAuth2UserPrincipal convertToPrincipal(String email, Map<String, Object> attributes) {
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> registerNewUser(attributes));

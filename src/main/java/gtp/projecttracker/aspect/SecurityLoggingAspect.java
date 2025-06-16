@@ -1,5 +1,9 @@
 package gtp.projecttracker.aspect;
 
+import gtp.projecttracker.dto.request.user.RegisterRequest;
+import gtp.projecttracker.dto.response.ErrorResponse;
+import gtp.projecttracker.exception.EmailAlreadyExistsException;
+import gtp.projecttracker.model.jpa.User;
 import gtp.projecttracker.model.mongodb.AuditLog;
 import gtp.projecttracker.repository.mongodb.AuditLogRepository;
 import gtp.projecttracker.security.service.AuthService;
@@ -9,6 +13,8 @@ import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -33,10 +39,80 @@ public class SecurityLoggingAspect {
     }
 
     /**
+     * Logs successful user registrations (only when 200 OK is returned)
+     */
+    @AfterReturning(
+            pointcut = "execution(* gtp.projecttracker.controller.AuthController.register(..)) && args(request)",
+            returning = "response",
+            argNames = "request,response"
+    )
+    public void logSuccessfulRegistration(RegisterRequest request, ResponseEntity<?> response) {
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return;
+        }
+
+        try {
+            HttpServletRequest httpRequest = getCurrentRequest();
+
+            AuditLog log = new AuditLog();
+            log.setActionType(AuditLog.ActionType.REGISTRATION_SUCCESS);
+            log.setTimestamp(Instant.now());
+            log.setActorName(request.email());
+            log.setIpAddress(httpRequest.getRemoteAddr());
+            log.setUserAgent(httpRequest.getHeader("User-Agent"));
+            log.setEndpoint(httpRequest.getRequestURI());
+            log.setPayload("User registered successfully");
+
+            auditLogRepository.save(log);
+            logger.info("Successful registration for: {}", request.email());
+        } catch (Exception e) {
+            logger.error("Failed to log registration success", e);
+        }
+    }
+
+    /**
+     * Logs failed registration attempts (including email exists)
+     */
+    @AfterReturning(
+            pointcut = "execution(* gtp.projecttracker.controller.AuthController.register(..)) && args(request)",
+            returning = "response",
+            argNames = "request,response"
+    )
+    public void logFailedRegistration(RegisterRequest request, ResponseEntity<?> response) {
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return;
+        }
+
+        try {
+            HttpServletRequest httpRequest = getCurrentRequest();
+
+            AuditLog log = new AuditLog();
+            log.setActionType(AuditLog.ActionType.REGISTRATION_FAILURE);
+            log.setTimestamp(Instant.now());
+            log.setActorName(request.email());
+            log.setIpAddress(httpRequest.getRemoteAddr());
+            log.setUserAgent(httpRequest.getHeader("User-Agent"));
+            log.setEndpoint(httpRequest.getRequestURI());
+
+            if (response.getBody() instanceof ErrorResponse errorResponse) {
+                log.setPayload("Failure reason: " + errorResponse.message());
+            } else {
+                log.setPayload("Failure reason: " + response.getStatusCode());
+            }
+
+            auditLogRepository.save(log);
+            logger.warn("Failed registration attempt for: {}", request.email());
+        } catch (Exception e) {
+            logger.error("Failed to log registration failure", e);
+        }
+    }
+
+
+    /**
      * Logs successful logins
      */
     @AfterReturning(
-            pointcut = "execution(* gtp.projecttracker.controller.AuthController.login(..))",
+            pointcut = "execution(* gtp.projecttracker.security.service.AuthService.login(..))",
             returning = "result"
     )
     public void logSuccessfulLogin(JoinPoint joinPoint, Object result) {
@@ -46,7 +122,7 @@ public class SecurityLoggingAspect {
         AuditLog log = new AuditLog();
         log.setActionType(AuditLog.ActionType.LOGIN_SUCCESS);
         log.setTimestamp(Instant.now());
-        log.setUsername(auth.getName());
+        log.setActorName(auth != null ? auth.getName() : "anonymous");
         log.setIpAddress(request.getRemoteAddr());
         log.setUserAgent(request.getHeader("User-Agent"));
         log.setEndpoint(request.getRequestURI());
@@ -69,7 +145,7 @@ public class SecurityLoggingAspect {
         AuditLog log = new AuditLog();
         log.setActionType(AuditLog.ActionType.LOGIN_FAILURE);
         log.setTimestamp(Instant.now());
-        log.setUsername(username);
+        log.setActorName(username);
         log.setIpAddress(request.getRemoteAddr());
         log.setUserAgent(request.getHeader("User-Agent"));
         log.setEndpoint(request.getRequestURI());
@@ -89,7 +165,7 @@ public class SecurityLoggingAspect {
         AuditLog log = new AuditLog();
         log.setActionType(AuditLog.ActionType.ACCESS_DENIED);
         log.setTimestamp(Instant.now());
-        log.setUsername(auth != null ? auth.getName() : "anonymous");
+        log.setActorName(auth != null ? auth.getName() : "anonymous");
         log.setIpAddress(request.getRemoteAddr());
         log.setUserAgent(request.getHeader("User-Agent"));
         log.setEndpoint(request.getRequestURI());
@@ -108,7 +184,7 @@ public class SecurityLoggingAspect {
         AuditLog log = new AuditLog();
         log.setActionType(AuditLog.ActionType.LOGOUT);
         log.setTimestamp(Instant.now());
-        log.setUsername(auth != null ? auth.getName() : "unknown");
+        log.setActorName(auth != null ? auth.getName() : "anonymous");
         log.setIpAddress(request.getRemoteAddr());
         log.setUserAgent(request.getHeader("User-Agent"));
         log.setEndpoint(request.getRequestURI());

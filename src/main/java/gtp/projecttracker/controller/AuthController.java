@@ -151,14 +151,15 @@ public class AuthController {
                 "authorities", authentication.getAuthorities()
         ));
     }
-}
 
-//    @PostMapping("/token-refresh")
-//    public ResponseEntity<MessageResponse> refreshToken() {
-//        return ResponseEntity.ok(
-//                MessageResponse.withDetails(
-//                        "Token refreshed successfully",
-//                        Map.of("expires_in", 3600)
-//                )
-//        );
-//    }
+
+   @PostMapping("/token-refresh")
+   public ResponseEntity<MessageResponse> refreshToken() {
+       return ResponseEntity.ok(
+               MessageResponse.withDetails(
+                       "Token refreshed successfully",
+                       Map.of("expires_in", 3600)
+               )
+        );
+    }
+}

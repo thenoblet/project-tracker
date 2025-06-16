@@ -19,6 +19,4 @@ public interface AuditLogRepository extends MongoRepository<AuditLog, String> {
     List<AuditLog> findByTimestampBetween(Instant startDate, Instant endDate);
 
     Page<AuditLog> findByActionType(AuditLog.ActionType actionType, Pageable pageable);
-
-
 }

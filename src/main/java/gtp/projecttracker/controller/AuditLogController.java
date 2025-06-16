@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class AuditLogController {
     @Autowired
     public AuditLogController(AuditService auditService) {
         this.auditService = auditService;
+
     }
 
     /**
@@ -37,6 +39,7 @@ public class AuditLogController {
      * @return A paginated list of audit logs wrapped in a ResponseEntity
      */
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<Page<AuditLog>> getAllAuditLogs(Pageable pageable) {
         return ResponseEntity.ok(auditService.getAllAuditLogs(pageable));
     }
@@ -48,6 +51,7 @@ public class AuditLogController {
      * @return A list of audit logs for the specified entity type
      */
     @GetMapping("/entity/{entityType}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<List<AuditLog>> getLogsByEntityType(@PathVariable String entityType) {
         return ResponseEntity.ok(auditService.getAuditLogsByEntityType(entityType));
     }
@@ -59,6 +63,7 @@ public class AuditLogController {
      * @return A list of audit logs for the specified actor
      */
     @GetMapping("/actor/{actorName}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<List<AuditLog>> getLogsByActor(@PathVariable String actorName) {
         return ResponseEntity.ok(auditService.getAuditLogsByActor(actorName));
     }
@@ -71,6 +76,7 @@ public class AuditLogController {
      * @return A list of audit logs that occurred within the specified date range
      */
     @GetMapping("/date-range")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<List<AuditLog>> getLogsByDateRange(
             @RequestParam String startDate,
             @RequestParam String endDate) {
