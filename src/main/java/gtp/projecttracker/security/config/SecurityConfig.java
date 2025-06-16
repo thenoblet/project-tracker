@@ -100,7 +100,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("audit-logs/**").hasRole("ADMIN")
+                        .requestMatchers("logs/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/tasks/**").authenticated()
                         .requestMatchers("/api/v1/users/me").authenticated()
                         .requestMatchers("/api/v1/users/admin/**").hasRole("ADMIN")

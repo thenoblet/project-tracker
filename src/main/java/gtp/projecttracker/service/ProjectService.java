@@ -56,7 +56,7 @@ public class ProjectService {
 
     @Transactional
     @CacheEvict(value = "projects", allEntries = true)
-    public ProjectResponse createProject(CreateProjectRequest projectRequest) {
+    public ProjectResponse saveProject(CreateProjectRequest projectRequest) {
         Project project = projectMapper.toEntity(projectRequest);
         Project savedProject = projectRepository.save(project);
         return projectMapper.toResponse(savedProject);
@@ -138,13 +138,11 @@ public class ProjectService {
             throw new EntityNotFoundException("Project not found with id: " + projectId);
         }
 
-        // If no filters are provided
         if (status == null && assigneeName == null && dueDateFrom == null && dueDateTo == null) {
             return taskRepository.findByProjectId(projectId, pageable)
                     .map(taskMapper::toResponse);
         }
 
-        // Build the query dynamically based on provided filters
         Specification<Task> spec = Specification.where((root, query, cb) ->
                 cb.equal(root.get("project").get("id"), projectId));
 

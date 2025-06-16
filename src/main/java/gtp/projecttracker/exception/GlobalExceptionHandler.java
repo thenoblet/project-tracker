@@ -1,6 +1,7 @@
 package gtp.projecttracker.exception;
 
 import gtp.projecttracker.dto.response.ErrorResponse;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
@@ -93,7 +94,7 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = ex.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
                         violation -> violation.getPropertyPath().toString(),
-                        violation -> violation.getMessage()
+                        ConstraintViolation::getMessage
                 ));
 
         return ResponseEntity.badRequest()
