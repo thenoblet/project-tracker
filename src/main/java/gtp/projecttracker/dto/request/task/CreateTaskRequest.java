@@ -26,7 +26,6 @@ public record CreateTaskRequest(
 
         Status status
 ) {
-    // Compact constructor for defaults
     public CreateTaskRequest {
         if (status == null) {
             status = Status.TODO;

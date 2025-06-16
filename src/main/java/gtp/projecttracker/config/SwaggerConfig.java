@@ -31,7 +31,7 @@ public class SwaggerConfig {
                         .description("Local development server"))
                 .info(new Info()
                         .title("BuildMaster Project Tracker")
-                        .description("API for managing projects, tasks and developers")
+                        .description("API for managing projects, tasks and users")
                         .version("v1.0")
                         .license(new License()
                                 .name("Apache 2.0")

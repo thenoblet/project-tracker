@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: BuildMaster Project Tracker API
+  title: BuildMaster Project Tracker
   description: "API for managing projects, tasks and developers"
   license:
     name: Apache 2.0
@@ -172,87 +172,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ProjectResponse"
-  /api/v1/developers/{id}:
-    get:
-      tags:
-      - developer-controller
-      operationId: getDeveloperById
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/DeveloperResponse"
-    put:
-      tags:
-      - developer-controller
-      operationId: updateDeveloper
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateDeveloperRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/DeveloperResponse"
-    delete:
-      tags:
-      - developer-controller
-      operationId: deleteDeveloper
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-      responses:
-        "200":
-          description: OK
-    patch:
-      tags:
-      - developer-controller
-      operationId: patchDeveloper
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateDeveloperRequest"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/DeveloperResponse"
   /api/v1/tasks:
     get:
       tags:
@@ -377,33 +296,16 @@ paths:
             '*/*':
               schema:
                 type: string
-  /api/v1/developers:
-    get:
-      tags:
-      - developer-controller
-      operationId: getAllDevelopers
-      parameters:
-      - name: pageable
-        in: query
-        required: true
-        schema:
-          $ref: "#/components/schemas/Pageable"
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/PageDeveloperResponse"
+  /api/v1/auth/register:
     post:
       tags:
-      - developer-controller
-      operationId: createDeveloper
+      - auth-controller
+      operationId: register
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateDeveloperRequest"
+              $ref: "#/components/schemas/RegisterRequest"
         required: true
       responses:
         "200":
@@ -411,7 +313,37 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/DeveloperResponse"
+                type: object
+  /api/v1/auth/logout:
+    post:
+      tags:
+      - auth-controller
+      operationId: logout
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/auth/login:
+    post:
+      tags:
+      - auth-controller
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
   /api/v1/projects/{id}/status:
     patch:
       tags:
@@ -444,6 +376,36 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ProjectResponse"
+  /api/v1/users/me:
+    get:
+      tags:
+      - user-controller
+      operationId: getCurrentUser
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+  /api/v1/users/admin/users:
+    get:
+      tags:
+      - user-controller
+      operationId: getAllUsers
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageUserResponse"
   /api/v1/tasks/test-publish:
     get:
       tags:
@@ -551,60 +513,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/PageTaskResponse"
-  /api/v1/developers/top:
-    get:
-      tags:
-      - developer-controller
-      operationId: getTopDevelopers
-      parameters:
-      - name: pageable
-        in: query
-        required: true
-        schema:
-          $ref: "#/components/schemas/Pageable"
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/DeveloperResponse"
-  /api/v1/developers/search:
-    get:
-      tags:
-      - developer-controller
-      operationId: searchDevelopers
-      parameters:
-      - name: name
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: email
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: skill
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: pageable
-        in: query
-        required: true
-        schema:
-          $ref: "#/components/schemas/Pageable"
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/PageDeveloperResponse"
-  /api/audit-logs:
+  /api/v1/logs:
     get:
       tags:
       - audit-log-controller
@@ -622,7 +531,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/PageAuditLog"
-  /api/audit-logs/entity/{entityType}:
+  /api/v1/logs/entity/{entityType}:
     get:
       tags:
       - audit-log-controller
@@ -642,24 +551,22 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/AuditLog"
-  /api/audit-logs/date-range:
+  /api/v1/logs/date-range:
     get:
       tags:
       - audit-log-controller
       operationId: getLogsByDateRange
       parameters:
-      - name: start
+      - name: startDate
         in: query
         required: true
         schema:
           type: string
-          format: date-time
-      - name: end
+      - name: endDate
         in: query
         required: true
         schema:
           type: string
-          format: date-time
       responses:
         "200":
           description: OK
@@ -669,7 +576,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/AuditLog"
-  /api/audit-logs/actor/{actorName}:
+  /api/v1/logs/actor/{actorName}:
     get:
       tags:
       - audit-log-controller
@@ -689,6 +596,67 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/AuditLog"
+  /api/v1/auth/oauth2/login/success:
+    get:
+      tags:
+      - auth-controller
+      operationId: loginSuccess
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/auth/oauth2/failure:
+    get:
+      tags:
+      - auth-controller
+      operationId: handleFailure
+      parameters:
+      - name: error
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/auth/check-roles:
+    get:
+      tags:
+      - auth-controller
+      operationId: checkRoles
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties: {}
+  /api/v1/auth/auth/check-auth:
+    get:
+      tags:
+      - auth-controller
+      operationId: checkAuthentication
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
 components:
   schemas:
     UpdateTaskRequest:
@@ -820,42 +788,6 @@ components:
         updatedAt:
           type: string
           format: date-time
-    UpdateDeveloperRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        email:
-          type: string
-        skills:
-          type: array
-          items:
-            type: string
-          uniqueItems: true
-    DeveloperResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        email:
-          type: string
-        skills:
-          type: array
-          items:
-            type: string
-          uniqueItems: true
-        taskCount:
-          type: integer
-          format: int32
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
     CreateTaskRequest:
       type: object
       properties:
@@ -897,7 +829,7 @@ components:
     AssignTaskRequest:
       type: object
       properties:
-        developerId:
+        userId:
           type: string
           format: uuid
         status:
@@ -916,9 +848,9 @@ components:
           - MEDIUM
           - HIGH
       required:
-      - developerId
       - priority
       - status
+      - userId
     CreateProjectRequest:
       type: object
       properties:
@@ -950,27 +882,50 @@ components:
       - deadline
       - name
       - startDate
-    CreateDeveloperRequest:
+    RegisterRequest:
       type: object
       properties:
-        name:
-          type: string
-          maxLength: 50
-          minLength: 2
         email:
           type: string
-          maxLength: 150
+          minLength: 1
+        password:
+          type: string
+        name:
+          type: string
+          maxLength: 100
           minLength: 0
+      required:
+      - email
+      - name
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+      required:
+      - email
+      - password
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        name:
+          type: string
         skills:
           type: array
           items:
             type: string
-            maxLength: 50
-            minLength: 2
           uniqueItems: true
-      required:
-      - email
-      - name
+        isOAuthUser:
+          type: boolean
     Pageable:
       type: object
       properties:
@@ -986,15 +941,83 @@ components:
           type: array
           items:
             type: string
-    PageTaskResponse:
+    PageUserResponse:
       type: object
       properties:
-        totalElements:
-          type: integer
-          format: int64
         totalPages:
           type: integer
           format: int32
+        totalElements:
+          type: integer
+          format: int64
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserResponse"
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: "#/components/schemas/SortObject"
+    SortObject:
+      type: object
+      properties:
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+        empty:
+          type: boolean
+    PageTaskResponse:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
         size:
           type: integer
           format: int32
@@ -1007,53 +1030,26 @@ components:
           format: int32
         sort:
           $ref: "#/components/schemas/SortObject"
-        numberOfElements:
-          type: integer
-          format: int32
-        first:
-          type: boolean
-        last:
-          type: boolean
-        pageable:
-          $ref: "#/components/schemas/PageableObject"
         empty:
-          type: boolean
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: "#/components/schemas/SortObject"
-        paged:
-          type: boolean
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
-    SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
           type: boolean
     PageProjectSummaryResponse:
       type: object
       properties:
-        totalElements:
-          type: integer
-          format: int64
         totalPages:
           type: integer
           format: int32
+        totalElements:
+          type: integer
+          format: int64
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
         size:
           type: integer
           format: int32
@@ -1066,15 +1062,6 @@ components:
           format: int32
         sort:
           $ref: "#/components/schemas/SortObject"
-        numberOfElements:
-          type: integer
-          format: int32
-        first:
-          type: boolean
-        last:
-          type: boolean
-        pageable:
-          $ref: "#/components/schemas/PageableObject"
         empty:
           type: boolean
     ProjectSummaryResponse:
@@ -1112,38 +1099,6 @@ components:
         taskCount:
           type: integer
           format: int64
-    PageDeveloperResponse:
-      type: object
-      properties:
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        size:
-          type: integer
-          format: int32
-        content:
-          type: array
-          items:
-            $ref: "#/components/schemas/DeveloperResponse"
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: "#/components/schemas/SortObject"
-        numberOfElements:
-          type: integer
-          format: int32
-        first:
-          type: boolean
-        last:
-          type: boolean
-        pageable:
-          $ref: "#/components/schemas/PageableObject"
-        empty:
-          type: boolean
     AuditLog:
       type: object
       properties:
@@ -1155,6 +1110,12 @@ components:
           - CREATE
           - UPDATE
           - DELETE
+          - LOGIN_SUCCESS
+          - LOGIN_FAILURE
+          - LOGOUT
+          - ACCESS_DENIED
+          - REGISTRATION_FAILURE
+          - INVALID_TOKEN
         entityType:
           type: string
         entityId:
@@ -1165,7 +1126,15 @@ components:
         actorName:
           type: string
         payload:
-          type: object
+          type: string
+        username:
+          type: string
+        ipAddress:
+          type: string
+        userAgent:
+          type: string
+        endpoint:
+          type: string
     ObjectId:
       type: object
       properties:
@@ -1178,12 +1147,21 @@ components:
     PageAuditLog:
       type: object
       properties:
-        totalElements:
-          type: integer
-          format: int64
         totalPages:
           type: integer
           format: int32
+        totalElements:
+          type: integer
+          format: int64
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
         size:
           type: integer
           format: int32
@@ -1196,14 +1174,5 @@ components:
           format: int32
         sort:
           $ref: "#/components/schemas/SortObject"
-        numberOfElements:
-          type: integer
-          format: int32
-        first:
-          type: boolean
-        last:
-          type: boolean
-        pageable:
-          $ref: "#/components/schemas/PageableObject"
         empty:
           type: boolean
