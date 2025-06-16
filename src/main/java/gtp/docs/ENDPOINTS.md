@@ -1,5 +1,4 @@
-# API Endpoints Reference
-
+## API Endpoints Reference
 
 ### Projects
 
@@ -46,10 +45,29 @@
 
 | Method | Endpoint                          | Description                                  | Parameters/Request Body                     |
 |--------|-----------------------------------|----------------------------------------------|---------------------------------------------|
-| GET    | `/api/v1/logs`                 | Get paginated audit logs                     | `pageable` (query)                          |
-| GET    | `/api/v1/logs/entity/{entityType}` | Get logs by entity type                  | `entityType` (path)                         |
-| GET    | `/api/v1/logs/date-range`      | Get logs within date range                   | `start`, `end` (query - date-time)          |
-| GET    | `/api/v1/logs/actor/{actorName}` | Get logs by actor name                    | `actorName` (path)                          |
+| GET    | `/api/v1/logs`                   | Get paginated audit logs                     | `pageable` (query)                          |
+| GET    | `/api/v1/logs/entity/{entityType}` | Get logs by entity type                   | `entityType` (path)                         |
+| GET    | `/api/v1/logs/date-range`        | Get logs within date range                   | `startDate`, `endDate` (query - date-time)  |
+| GET    | `/api/v1/logs/actor/{actorName}` | Get logs by actor name                      | `actorName` (path)                          |
+
+### Auth
+
+| Method | Endpoint                          | Description                                  | Parameters/Request Body                     |
+|--------|-----------------------------------|----------------------------------------------|---------------------------------------------|
+| POST   | `/api/v1/auth/register`          | Register a new user                          | `RegisterRequest` (body)                    |
+| POST   | `/api/v1/auth/login`             | Login user                                   | `LoginRequest` (body)                       |
+| POST   | `/api/v1/auth/logout`            | Logout user                                  | -                                           |
+| GET    | `/api/v1/auth/oauth2/login/success` | OAuth2 login success callback             | `token` (query)                             |
+| GET    | `/api/v1/auth/oauth2/failure`    | OAuth2 login failure callback               | `error` (query)                             |
+| GET    | `/api/v1/auth/check-roles`       | Check user roles                            | -                                           |
+| GET    | `/api/v1/auth/auth/check-auth`   | Check authentication status                 | -                                           |
+
+### Users
+
+| Method | Endpoint                          | Description                                  | Parameters/Request Body                     |
+|--------|-----------------------------------|----------------------------------------------|---------------------------------------------|
+| GET    | `/api/v1/users/me`               | Get current user info                       | -                                           |
+| GET    | `/api/v1/users/admin/users`      | Get all users (admin only)                  | `pageable` (query)                          |
 
 ### Other
 
