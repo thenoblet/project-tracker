@@ -1,6 +1,5 @@
-
-
 # API Endpoints Reference
+
 
 ### Projects
 

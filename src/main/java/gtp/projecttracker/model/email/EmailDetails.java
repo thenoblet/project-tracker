@@ -2,7 +2,7 @@ package gtp.projecttracker.model.email;
 
 /**
  * Model class representing email details in the project tracking system.
- * 
+ *
  * This class encapsulates all the information needed to send an email,
  * including the recipient's address, the message body, the subject line,
  * and optionally a template name for rendering the email content.

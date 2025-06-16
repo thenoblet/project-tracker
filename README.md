@@ -18,42 +18,56 @@ The Project Tracker API is a comprehensive backend solution for BuildMaster, a r
 - **Audit logging**: All changes tracked in MongoDB
 - **RESTful API**: Comprehensive endpoints for all operations
 
+---
+
 ## Entity Model
 
 ```mermaid
 erDiagram
     PROJECT ||--o{ TASK : "has many"
-    DEVELOPER }|--o{ TASK : "assigned to"
-    
+    USER ||--o{ TASK : "assigned to"
+    USER ||--o{ USER_SKILLS : "has"
+    USER ||--o{ UserRole : assigned
+
     PROJECT {
         UUID id PK
-        String name
-        String description
-        LocalDate deadline
-        String status
-        LocalDateTime createdAt
-        LocalDateTime updatedAt
+        String name "NotBlank, Size(2-255)"
+        String description "Size(2-500)"
+        LocalDate startDate "NotNull, FutureOrPresent"
+        LocalDate deadline "NotNull, FutureOrPresent"
+        ProjectStatus status "Default: ACTIVE"
+        LocalDateTime createdAt "NotNull"
+        LocalDateTime updatedAt "NotNull"
     }
-    
-    DEVELOPER {
+
+    USER {
         UUID id PK
-        String name
-        String email
-        String skills
+        String name "Size(max=50)"
+        String email "NotBlank, Unique"
+        String password "Nullable"
+        Role role "NotNull, Enum"
+        boolean oauth2user "Default: false"
+        Integer taskCount "Formula-based"
         LocalDateTime createdAt
         LocalDateTime updatedAt
     }
-    
+
     TASK {
         UUID id PK
-        String title
-        String description
-        String status
-        LocalDate dueDate
-        Long project_id FK
-        Long developer_id FK
-        LocalDateTime createdAt
-        LocalDateTime updatedAt
+        String title "NotBlank, Size(2-255)"
+        String description "Size(2-500)"
+        Status status "Default: TODO"
+        Priority priority "Default: LOW"
+        LocalDate dueDate "NotNull"
+        UUID project_id FK
+        UUID user_id FK
+        LocalDateTime createdAt "NotNull"
+        LocalDateTime updatedAt "NotNull"
+    }
+
+    USER_SKILLS {
+        UUID user_id FK
+        String skill
     }
     
     AUDIT_LOG {
@@ -65,8 +79,17 @@ erDiagram
         String actorName
         String payload
     }
-```
 
+    UserRole { 
+        ROLE_ADMIN
+        ROLE_MANAGER 
+        ROLE_DEVELOPER 
+        ROLE_CONTRACTOR 
+        }
+
+
+```
+---
 ## Tech Stack
 
 - **Backend**: Spring Boot 3.1
@@ -78,6 +101,7 @@ erDiagram
 - **API Documentation**: OpenAPI 3.0 (Swagger)
 - **Testing**: JUnit 5
 
+---
 ## Getting Started
 
 ### Prerequisites
@@ -103,7 +127,8 @@ erDiagram
    ```bash
    mvn spring-boot:run
    ```
-
+---
+## API ENDPOINTS
 
 | Method | Endpoint                          | Description                                  | Parameters/Request Body                     |
 |--------|-----------------------------------|----------------------------------------------|---------------------------------------------|
@@ -122,6 +147,49 @@ Visit [ALL API ENDPOINTS](src/main/java/gtp/docs/ENDPOINTS.md) to see the full l
 
 For complete API documentation, visit the Swagger UI at `http://localhost:8080/swagger-ui.html` when the application is running.
 
+---
+
+## Authentication Sequence Diagram
+
+````mermaid
+sequenceDiagram
+    actor User
+    participant Client
+    participant AuthController
+    participant AuthService
+    participant Database
+    participant JwtProvider
+    participant GoogleOAuth
+
+    Note over User,GoogleOAuth: Email/Password Login
+    User->>Client: Enter credentials
+    Client->>AuthController: POST /login
+    AuthController->>AuthService: login(request)
+    AuthService->>Database: findByEmail() + validate password
+    Database-->>AuthService: User details
+    AuthService->>JwtProvider: generateToken()
+    JwtProvider-->>AuthService: JWT
+    AuthService-->>Client: JWT + user info
+
+    Note over User,GoogleOAuth: Google OAuth2 Login
+    User->>Client: Click "Sign in with Google"
+    Client->>GoogleOAuth: Redirect to Google
+    GoogleOAuth-->>Client: Authorization code
+    Client->>AuthController: OAuth2 callback
+    AuthController->>Database: findOrCreateUser()
+    Database-->>AuthController: User details
+    AuthController->>JwtProvider: generateToken()
+    JwtProvider-->>AuthController: JWT
+    AuthController-->>Client: JWT + user info
+
+    Note over User,GoogleOAuth: Protected Endpoints
+    Client->>AuthController: Request with JWT header
+    AuthController->>JwtProvider: validateToken()
+    JwtProvider-->>AuthController: Valid
+    AuthController-->>Client: Protected data
+````
+
+---
 
 ## Advanced Features
 
