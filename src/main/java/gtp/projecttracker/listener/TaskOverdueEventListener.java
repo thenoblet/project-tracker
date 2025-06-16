@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -20,28 +22,40 @@ public class TaskOverdueEventListener {
     private final EmailService emailService;
 
     public TaskOverdueEventListener(EmailService emailService) {
+        logger.info("EmailService is {}null", emailService == null ? "" : "NOT ");
         this.emailService = emailService;
+        logger.info("TaskOverdueEventListener initialized!");
     }
 
     @Async
     @EventListener
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleTaskOverdueEvent(TaskOverdueEvent event) {
-        Task task = event.task();
-        Developer assignee = task.getAssignee();
+        logger.debug("Received TaskOverdueEvent for task ID: {}", event.task().getId());
 
+        Task task = event.task();
+        logger.debug("Processing overdue task: {}", task.getTitle());
+
+        Developer assignee = task.getAssignee();
         if (assignee == null || assignee.getEmail() == null) {
             logger.warn("Task {} is overdue but has no assignee with email", task.getTitle());
             return;
         }
 
+        logger.info("Task {} is overdue for assignee {}", task.getTitle(), assignee);
+        String projectName = (task.getProject() != null) ? task.getProject().getName() : "No Project";
+        logger.info("Task {} is overdue for project {}", task.getTitle(), projectName);
         Map<String, Object> templateContext = Map.of(
                 "assigneeName", assignee.getName(),
                 "daysOverdue", event.daysOverdue(),
                 "taskTitle", task.getTitle(),
-                "projectName", task.getProject().getName(),
+                "projectName", projectName,
                 "dueDate", task.getDueDate()
         );
 
+        logger.info("Sending overdue notification for task '{}' to {}",
+                task.getTitle(),
+                assignee.getEmail());
         try {
             emailService.sendEmailWithTemplate(
                     assignee.getEmail(),

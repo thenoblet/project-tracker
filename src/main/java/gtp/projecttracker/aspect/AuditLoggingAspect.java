@@ -140,7 +140,6 @@ public class AuditLoggingAspect {
             entityName = entityName.substring(6);
         }
 
-        // Handle cases like "deleteById", "deleteByName"
         if (entityName.startsWith("By")) {
             return "Entity"; // Fallback
         }

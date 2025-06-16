@@ -26,17 +26,17 @@ public class AuditLogController {
         return ResponseEntity.ok(auditService.getAllAuditLogs(pageable));
     }
 
-    @GetMapping("/by-entity/{entityType}")
+    @GetMapping("/entity/{entityType}")
     public ResponseEntity<List<AuditLog>> getLogsByEntityType(@PathVariable String entityType) {
         return ResponseEntity.ok(auditService.getAuditLogsByEntityType(entityType));
     }
 
-    @GetMapping("/by-actor/{actorName}")
+    @GetMapping("/actor/{actorName}")
     public ResponseEntity<List<AuditLog>> getLogsByActor(@PathVariable String actorName) {
         return ResponseEntity.ok(auditService.getAuditLogsByActor(actorName));
     }
 
-    @GetMapping("/by-date-range")
+    @GetMapping("/date-range")
     public ResponseEntity<List<AuditLog>> getLogsByDateRange(
             @RequestParam Instant start,
             @RequestParam Instant end) {

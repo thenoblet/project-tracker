@@ -43,7 +43,7 @@ public class TestController {
             emailService.sendEmailWithTemplate(
                     recipient != null ? recipient : "patricknobletappiah@gmail.com",
                     "Task Overdue - Test Email",
-                    "task-overdue-simple",
+                    "task-overdue",
                     testData
             );
 

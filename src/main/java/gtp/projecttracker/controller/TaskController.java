@@ -75,5 +75,10 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getOverdueTasks(pageable));
     }
 
-
+    @GetMapping("/test-publish")
+    public String testPublish() {
+        Task tasked = taskService.getTaskEntityById(UUID.fromString("c067c1c2-fd74-435d-bcbd-5caaff576dfe"));
+        taskService.checkAndNotifyIfOverdue(tasked);
+        return "Test event published";
+    }
 }
