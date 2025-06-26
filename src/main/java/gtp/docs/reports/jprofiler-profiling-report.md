@@ -5,7 +5,7 @@
 ---
 
 ## 📊 1. Memory Allocation Analysis
-![Memory Allocation](images/memory_allocation.png)
+![Memory Allocation](https://github.com/thenoblet/project-tracker/blob/15f827431b8946c17b3cb0a765a9c1333c345682/src/main/resources/images/memory_allocation.png))
 
 ### Key Findings
 - **Top Allocators**:
@@ -24,7 +24,7 @@
 ---
 
 ## 🧵 2. Thread Dump Analysis
-![Thread Dump](jetbrains://idea/navigate/reference?project=project-tracker&path=images%2Fthread_dump.png)
+![Thread Dump](https://github.com/thenoblet/project-tracker/blob/15f827431b8946c17b3cb0a765a9c1333c345682/src/main/resources/images/thread_dump.png)
 
 ### Key Findings
 - **Thread States**:
@@ -41,7 +41,7 @@
 ---
 
 ## ♻️ 3. Garbage Collection Behavior
-![GC Pauses](jetbrains://idea/navigate/reference?project=project-tracker&path=images%2Fgc_pauses.png)
+![GC Pauses](https://github.com/thenoblet/project-tracker/blob/15f827431b8946c17b3cb0a765a9c1333c345682/src/main/resources/images/gc_pauses.png)
 
 ### Key Findings
 - **GC Activity**: Minimal Full GCs (healthy), but frequent minor GCs.
@@ -56,7 +56,7 @@
 ---
 
 ## 🔥 4. CPU Hotspots
-**Top Methods ![CPU Hotspots](jetbrains://idea/navigate/reference?project=project-tracker&path=images%2Fcpu_hotspots.png)**:  
+**Top Methods ![CPU Hotspots](https://github.com/thenoblet/project-tracker/blob/15f827431b8946c17b3cb0a765a9c1333c345682/src/main/resources/images/cpu_hotspots.png)**:  
 | Method                                      | Self Time (ms) | Invocations |  
 |---------------------------------------------|----------------|-------------|  
 | `TaskRepository.findOverdueTasks()`         | 749,056        | 30          |  
@@ -77,7 +77,7 @@
 ---
 
 ## 📎 Attachments
-- [Full JProfiler Snapshot](jetbrains://idea/navigate/reference?project=project-tracker&path=shots%2Fsnapshots%2Fjprofiler_snapshot.jps)
-- [JMeter Test Plan](jetbrains://idea/navigate/reference?project=project-tracker&path=shots%2Ftest_plans%2Fjmeter_testplan.jmx)
+- [Full JProfiler Snapshot](https://github.com/thenoblet/project-tracker/blob/15f827431b8946c17b3cb0a765a9c1333c345682/src/main/resources/shots/snapshots/jprofiler_snapshot.jps)
+- [JMeter Test Plan](https://github.com/thenoblet/project-tracker/blob/15f827431b8946c17b3cb0a765a9c1333c345682/src/main/resources/shots/test_plans/jmeter_testplan.jmx)
 
 ---
