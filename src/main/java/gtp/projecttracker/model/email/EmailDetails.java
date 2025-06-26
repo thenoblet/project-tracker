@@ -98,7 +98,7 @@ public class EmailDetails {
     /**
      * Sets the subject line of the email.
      *
-     * @param subject The email subject to set
+     * @param subject The email subjects to set
      */
     public void setSubject(String subject) {
         this.subject = subject;

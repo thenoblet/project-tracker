@@ -12,8 +12,8 @@ import gtp.projecttracker.model.jpa.Task.Status;
 import gtp.projecttracker.model.jpa.Task.Priority;
 import gtp.projecttracker.model.jpa.User;
 import gtp.projecttracker.repository.jpa.TaskRepository;
-
 import gtp.projecttracker.security.util.SecurityUtil;
+
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -204,7 +204,7 @@ public class TaskService {
         ).map(taskMapper::toResponse);
     }
 
-    @Scheduled(fixedDelayString = "${app.notifications.overdue-check-interval:5000}")
+    @Scheduled(fixedDelayString = "${app.notifications.overdue-check-interval:300000}")
     @Transactional
     public void checkAndNotifyOverdueTasks() {
 
@@ -226,11 +226,8 @@ public class TaskService {
     }
 
     public void checkAndNotifyIfOverdue(Task task) {
-        log.info("Checking for overdue task {}", task.getId());
-
         try {
             LocalDate lastNotified = lastNotificationSent.get(task.getId());
-            log.info("Last notification sent: {}", lastNotified);
             LocalDate today = LocalDate.now();
             log.info("Today: {}", today);
             log.info("Task due date: {}", task.getDueDate());

@@ -1,12 +1,12 @@
 package gtp.projecttracker.controller;
 
+import gtp.projecttracker.mapper.TaskMapper;
+import gtp.projecttracker.model.jpa.Task;
+import gtp.projecttracker.service.TaskService;
 import gtp.projecttracker.dto.request.task.AssignTaskRequest;
 import gtp.projecttracker.dto.request.task.CreateTaskRequest;
 import gtp.projecttracker.dto.request.task.UpdateTaskRequest;
 import gtp.projecttracker.dto.response.task.TaskResponse;
-import gtp.projecttracker.mapper.TaskMapper;
-import gtp.projecttracker.model.jpa.Task;
-import gtp.projecttracker.service.TaskService;
 
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;

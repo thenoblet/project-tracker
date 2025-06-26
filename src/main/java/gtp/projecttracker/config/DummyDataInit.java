@@ -42,9 +42,7 @@ public class DummyDataInit {
      */
     @PostConstruct
     public void init() {
-        // Check if data already exists to avoid duplicates
         if (taskRepository.count() == 0) {
-            // Create some dummy tasks
             Task task1 = new Task("Implement user authentication",
                     "Add login and registration functionality",
                     Status.TODO,
@@ -75,7 +73,6 @@ public class DummyDataInit {
                     Priority.LOW,
                     LocalDate.now().plusDays(1));
 
-            // Save all tasks
             taskService.saveTask(task1);
             taskService.saveTask(task2);
             taskService.saveTask(task3);

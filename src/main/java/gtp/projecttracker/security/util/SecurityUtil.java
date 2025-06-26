@@ -37,7 +37,8 @@ public class SecurityUtil {
     public boolean isAdmin() {
         return SecurityContextHolder.getContext().getAuthentication()
                 .getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(ADMIN_ROLE));
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(ADMIN_ROLE)
+                );
     }
 
     public boolean isManager() {
@@ -47,7 +48,9 @@ public class SecurityUtil {
         }
 
         return auth.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(MANAGER_ROLE));
+                .anyMatch(
+                        grantedAuthority -> grantedAuthority.getAuthority().equals(MANAGER_ROLE)
+                );
     }
 
     public boolean isAdminOrManager() {
