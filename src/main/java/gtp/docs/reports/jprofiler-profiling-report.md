@@ -5,7 +5,7 @@
 ---
 
 ## 📊 1. Memory Allocation Analysis
-![Memory Allocation](jetbrains://idea/navigate/reference?project=project-tracker&path=images%2Fmemory_allocation.png)
+![Memory Allocation](images/memory_allocation.png)
 
 ### Key Findings
 - **Top Allocators**:
