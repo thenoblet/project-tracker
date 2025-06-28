@@ -14,11 +14,11 @@ java -Xmx512m -Xms512m -XX:+UseG1GC -XX:+PrintGCDetails -XX:+HeapDumpOnOutOfMemo
 
 
 #### Load Testing Setup (JMeter)
-| Parameter       | Value                                                  |
-| --------------- | ------------------------------------------------------ |
-| Number of Users | **200** concurrent threads                             |
-| Ramp-up Period  | **600 seconds** (gradual load increase)                |
-| Loop Count      | **Infinite**                                           |
+| Parameter       | Value                                                 |
+| --------------- | ----------------------------------------------------- |
+| Number of Users | **200** concurrent threads                            |
+| Ramp-up Period  | **60 seconds** (gradual load increase)                |
+| Loop Count      | **Infinite**                                          |
 | Duration        | Test manually stopped after desired observation window |
 
 
