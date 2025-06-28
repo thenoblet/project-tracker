@@ -1,5 +1,6 @@
 package gtp.projecttracker.controller;
 
+import gtp.projecttracker.dto.response.task.TaskSummaryResponse;
 import gtp.projecttracker.mapper.TaskMapper;
 import gtp.projecttracker.model.jpa.Task;
 import gtp.projecttracker.service.TaskService;
@@ -53,11 +54,12 @@ public class TaskController {
      * Retrieves all tasks with pagination support.
      *
      * @param pageable Pagination information including page number, size, and sorting
+     *
      * @return A paginated list of tasks wrapped in a ResponseEntity
      */
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<Page<TaskResponse>> getAllTasks(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<Page<TaskSummaryResponse>> getAllTasks(@PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(taskService.getTasks(pageable));
     }
 

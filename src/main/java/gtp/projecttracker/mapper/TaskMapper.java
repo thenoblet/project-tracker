@@ -3,6 +3,7 @@ package gtp.projecttracker.mapper;
 import gtp.projecttracker.dto.request.task.CreateTaskRequest;
 import gtp.projecttracker.dto.request.task.UpdateTaskRequest;
 import gtp.projecttracker.dto.response.task.TaskResponse;
+import gtp.projecttracker.dto.response.task.TaskSummaryResponse;
 import gtp.projecttracker.model.jpa.Task;
 import gtp.projecttracker.model.jpa.Project;
 
@@ -108,40 +109,13 @@ public class TaskMapper {
         }
     }
 
-    /**
-     * Convert list of Task entities to list of TaskResponse DTOs
-     */
-    public List<TaskResponse> toResponseList(List<Task> tasks) {
-        if (tasks == null) {
-            return null;
-        }
-
-        return tasks.stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Convert Task entity to simple TaskResponse (without related entity details)
-     */
-    public TaskResponse toSimpleResponse(Task task) {
-        if (task == null) {
-            return null;
-        }
-
-        return new TaskResponse(
+    public TaskSummaryResponse toSummaryResponse(Task task) {
+        return new TaskSummaryResponse(
                 task.getId(),
                 task.getTitle(),
-                task.getDescription(),
                 task.getStatus(),
                 task.getPriority(),
-                task.getDueDate(),
-                null, // projectId only
-                null, // no project name
-                null, // assigneeId only
-                null, // no assignee username
-                task.getCreatedAt(),
-                task.getUpdatedAt()
+                task.getDueDate()
         );
     }
 }

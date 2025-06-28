@@ -1,7 +1,9 @@
 package gtp.projecttracker.controller;
 
+import gtp.projecttracker.dto.response.task.TaskSummaryResponse;
 import gtp.projecttracker.dto.response.user.UserResponse;
 import gtp.projecttracker.model.jpa.User;
+import gtp.projecttracker.service.TaskService;
 import gtp.projecttracker.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 /**
  * REST controller for user-related operations and user management.
@@ -46,6 +51,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
+    private final TaskService taskService;
 
     /**
      * Constructs a new UserController with the required service dependency.
@@ -53,8 +59,9 @@ public class UserController {
      * @param userService the user service implementation for business logic operations
      */
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, TaskService taskService) {
         this.userService = userService;
+        this.taskService = taskService;
     }
 
     /**
@@ -92,5 +99,11 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<Page<UserResponse>> getAllUsers(@PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
+    }
+
+    @GetMapping("/{id}/tasks")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or @securityUtil.isTaskOwner(#id)")
+    public ResponseEntity<Page<TaskSummaryResponse>> getAssignedTasks(@PathVariable UUID id, @PageableDefault(size = 20, sort = "dueDate") Pageable pageable) {
+        return ResponseEntity.ok(taskService.getTasksByUserId(id, pageable));
     }
 }

@@ -4,6 +4,7 @@ import gtp.projecttracker.dto.request.task.AssignTaskRequest;
 import gtp.projecttracker.dto.request.task.CreateTaskRequest;
 import gtp.projecttracker.dto.request.task.UpdateTaskRequest;
 import gtp.projecttracker.dto.response.task.TaskResponse;
+import gtp.projecttracker.dto.response.task.TaskSummaryResponse;
 import gtp.projecttracker.event.TaskOverdueEvent;
 import gtp.projecttracker.exception.ResourceNotFoundException;
 import gtp.projecttracker.mapper.TaskMapper;
@@ -32,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -58,9 +60,9 @@ public class TaskService {
         this.securityUtil = securityUtil;
     }
 
-    public Page<TaskResponse> getTasks(Pageable pageable) {
+    public Page<TaskSummaryResponse> getTasks(Pageable pageable) {
         return taskRepository.findAll(pageable)
-                .map(taskMapper::toResponse);
+                .map(taskMapper::toSummaryResponse);
     }
 
     public Page<TaskResponse> getTasksByProjectId(UUID projectId, Pageable pageable) {
@@ -180,6 +182,23 @@ public class TaskService {
 
     public TaskResponse saveTask(Task entity) {
         return taskMapper.toResponse(taskRepository.save(entity));
+    }
+
+    /**
+     * Retrieves all tasks assigned to a specific user with pagination support
+     *
+     * @param userId The ID of the user whose tasks should be retrieved
+     * @param pageable Pagination information (page number, size, sorting)
+     * @return Page of TaskResponse DTOs
+     * @throws ResourceNotFoundException If the user with specified ID doesn't exist
+     */
+    public Page<TaskSummaryResponse> getTasksByUserId(UUID userId, Pageable pageable) {
+        if (!userService.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found with ID: " + userId);
+        }
+
+        return taskRepository.findByAssigneeId(userId, pageable)
+                .map(taskMapper::toSummaryResponse);
     }
 
     @Transactional

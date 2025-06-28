@@ -1,11 +1,10 @@
 # 🚀 Performance Profiling Report
 **Application**: Project Tracker API  
 **Test Scenario**: 200-user load test on `/api/v1/tasks`, `/api/v1/projects`, and `/api/v1/users`
-
 ---
 
 ## 📊 1. Memory Allocation Analysis
-![Memory Allocation](https://github.com/thenoblet/project-tracker/blob/15f827431b8946c17b3cb0a765a9c1333c345682/src/main/resources/images/memory_allocation.png))
+![Memory Allocation](https://github.com/thenoblet/project-tracker/blob/15f827431b8946c17b3cb0a765a9c1333c345682/src/main/resources/images/memory_allocation.png)
 
 ### Key Findings
 - **Top Allocators**:
@@ -48,10 +47,6 @@
 - **Heap Behavior**:
     - Steady allocation rate (no leaks detected).
     - Old Gen peaked at **85% usage** during load.
-
-### Recommendations
-✅ **Increase Heap**: Set `-Xmx` to 4GB (from current 2GB).  
-✅ **G1GC Tuning**: Add `-XX:MaxGCPauseMillis=200` to prioritize latency.
 
 ---
 

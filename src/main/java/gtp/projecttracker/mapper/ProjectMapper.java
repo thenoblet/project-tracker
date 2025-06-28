@@ -69,13 +69,7 @@ public class ProjectMapper {
         return new ProjectSummaryResponse(
                 project.getId(),
                 project.getName(),
-                project.getDescription(),
-                project.getStartDate(),
-                project.getDeadline(),
-                project.getStatus(),
-                project.getCreatedAt(),
-                project.getUpdatedAt(),
-                project.getTasks().size()
+                project.getStatus()
         );
     }
 }

@@ -1,10 +1,13 @@
 package gtp.projecttracker;
 
 import gtp.projecttracker.config.EmailProperties;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -24,5 +27,14 @@ import static org.springframework.data.web.config.EnableSpringDataWebSupport.Pag
 public class ProjectTracker {
     public static void main(String[] args) {
         SpringApplication.run(ProjectTracker.class, args);
+    }
+
+
+    @Bean
+    public CommandLineRunner checkCache(Environment env) {
+        return args -> {
+            System.out.println("Active cache type: " +
+                    env.getProperty("spring.cache.type"));
+        };
     }
 }
