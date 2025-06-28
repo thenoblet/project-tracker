@@ -12,10 +12,9 @@ The analysis covers five endpoints:
 - `api/v1/projects` (GET PROJECTS)
 - `api/v1/users` (GET ALL USERS)
 - `api/v1/users/{id}/tasks` (GET USER TASKS)
-
-with a total of 2000 samples each. 
-The tests were conducted using JMeter with *200 threads (users)*, *a ramp-up period of 60 seconds*, and a *loop count of 2*. 
-The goal is to evaluate the impact of optimisations, compare aggregate and summary data and identify anomalies, and provide action plans for long term optimisations.
+  
+  with a total of 2000 samples each. 
+  The tests were conducted using JMeter with **200 threads (users)**, **a ramp-up period of 60 seconds**, and a **loop count of 2**. The goal is to evaluate the impact of optimisations, compare aggregate and summary data and identify anomalies, and provide action plans for long term optimisations.
 ---
 
 ## Response Time Analysis
