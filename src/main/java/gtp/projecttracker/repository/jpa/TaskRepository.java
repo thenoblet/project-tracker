@@ -33,6 +33,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID>, JpaSpecificat
     @Query("DELETE FROM Task t WHERE t.project.id = :projectId")
     void deleteByProjectId(@Param("projectId") UUID projectId);
 
+
     @Modifying
     @Query("UPDATE Task t SET t.assignee = NULL WHERE t.assignee.id = :userId")
     void unassignTasksFromUser(@Param("userId") UUID userId);
@@ -42,7 +43,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID>, JpaSpecificat
             @NotNull Status status,
             @NotNull Pageable pageable);
 
-    List<Task> findByAssigneeId(UUID developerId);
+    Page<Task> findByAssigneeId(UUID userId, Pageable pageable);
 
     @Query("SELECT t.assignee.id, COUNT(t) FROM Task t GROUP BY t.assignee.id ORDER BY COUNT(t) DESC")
     List<Object[]> countTasksByUser();

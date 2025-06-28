@@ -16,7 +16,13 @@ import java.util.UUID;
  * and are tracked with creation and update timestamps.
  */
 @Entity
-@Table(name = "tasks")
+@Table(
+        name = "tasks",
+        indexes = {
+                @Index(name = "idx_tasks_duedate", columnList = "dueDate"),
+                @Index(name = "idx_tasks_status", columnList = "status")
+        }
+)
 public class Task {
 
     @Id

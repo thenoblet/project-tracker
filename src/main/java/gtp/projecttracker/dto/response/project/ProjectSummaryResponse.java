@@ -9,12 +9,6 @@ import java.time.LocalDateTime;
 public record ProjectSummaryResponse(
         UUID id,
         String name,
-        String description,
-        LocalDate startDate,
-        LocalDate deadline,
-        ProjectStatus status,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        long taskCount
+        ProjectStatus status
 ) {
 }

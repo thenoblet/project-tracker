@@ -5,6 +5,7 @@ import gtp.projecttracker.mapper.UserMapper;
 import gtp.projecttracker.model.jpa.User;
 import gtp.projecttracker.repository.jpa.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,7 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
+    @Cacheable("users")
     public User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
@@ -37,5 +39,9 @@ public class UserService {
 
     public Optional<User> getUserById(UUID id) {
         return userRepository.findById(id);
+    }
+
+    public boolean existsById(UUID userId) {
+        return userRepository.existsById(userId);
     }
 }
