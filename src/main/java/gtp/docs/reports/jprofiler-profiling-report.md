@@ -27,8 +27,20 @@ The optimisation efforts have yielded significant improvements across all key pe
 
 > **Notable**: While absolute memory usage remained similar, the allocation pattern became much more predictable, indicating better object lifecycle management.
 
-### Screenshots:
-**Before
+### Screenshots
+
+**1. Before Optimisation**
+
+Memory Alloc Tree Before
+
+![Memory Alloc Tree Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/before/allocation_tree_before.png)
+
+**2. After Optimisation**
+
+Memory Alloc Tree After
+
+![Memory Alloc Tree After](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/after/allocation_tree_after.png)
+
 ---
 
 ## 🔥 CPU & Hot Methods Analysis
@@ -50,6 +62,20 @@ The optimisation efforts have yielded significant improvements across all key pe
 - **Controller layer**: Reduced overhead in project and task controllers
 
 > **Concern**: The `TaskThreadsWrappingRunnable.run` method actually increased from 82.7% to 89.3% CPU usage, suggesting this may be a new bottleneck or the optimisation shifted load concentration.
+
+### Screenshots
+
+**1. Before Optimisation**
+
+Memory Alloc Hotspot Before
+
+![Memory Alloc Hotspot Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/before/allocation_hotspots_before.png)
+
+**2. After Optimisation**
+
+[Memory Alloc Hostpot After
+
+![Memory Alloc Hostpot After](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/after/allocation_hotspot_after.png)
 
 ---
 
@@ -79,6 +105,19 @@ The optimisation efforts have yielded significant improvements across all key pe
 
 > **Excellent improvement**: The GC optimisation is one of the most significant wins, with much more predictable and less frequent garbage collection cycles.
 
+### Screenshots
+
+**1. Before Optimisation**
+
+GC Activity Before
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/before/gc_activity_before.png)
+
+**2. After Optimisation**
+
+GC Activity After
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/after/gc_activity_after.png)
 ---
 
 ## 🧵 Thread Management Analysis
@@ -106,6 +145,19 @@ The optimisation efforts have yielded significant improvements across all key pe
 
 > **Good optimisation**: While thread count remained the same, the utilisation pattern became much more efficient with reduced contention.
 
+### Screenshots
+
+**1. Before Optimisation**
+
+Thread Before
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/before/threads_before.png)
+
+**2. After Optimisation**
+
+Thread After
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/after/threads_after.png)
 ---
 
 ## 📈 Dashboard Trend Analysis
@@ -132,7 +184,42 @@ The optimisation efforts have yielded significant improvements across all key pe
 - **After**: More stable CPU utilisation patterns
 - **Improvement**: Better resource utilisation efficiency
 
+### Screenshots
+
+**1. Before Optimisation**
+
+Overall System Before
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/before/overview_before.png)
+
+**2. After Optimisation**
+
+Overall System After
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/after/overview_after.png)
+
 ---
+
+## Prometheus/Grafana Dashboard
+
+> **NOTE**:
+>> To view the full Grafana dashboards, follow the links below to see full snapshots:
+>>> 1. [Grafana Dashboard Before Optimisation](https://snapshots.raintank.io/dashboard/snapshot/hms6TKMdlKsdiHIZwdh6e424YssZ4ycE)
+>>> 2. [Grafana Dashboard After Optimisation](https://snapshots.raintank.io/dashboard/snapshot/yOBi51P72SCnc3OjVpft2mAUFRxnJKVK)
+
+### Screenshots
+
+**1. Before Optimisation**
+
+Grafana Dashboard before optimisation
+
+![](https://github.com/thenoblet/project-tracker/blob/31fb3399cf6d0dc5fea0e077b1aefe32acb3e3b2/src/main/resources/images/before/grafana_before.png)
+
+**2. After Optimisation**
+
+Grafana Dashboard After optimisation
+
+![](https://github.com/thenoblet/project-tracker/blob/31fb3399cf6d0dc5fea0e077b1aefe32acb3e3b2/src/main/resources/images/after/grafana_after.png)
 
 ## ✅ Summary of Improvements
 

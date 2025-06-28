@@ -3,8 +3,8 @@
 ## Overview
 
 This report analyses the performance of a Spring Boot application based on JMeter reports: 
-- aggregate reports (`aggregate_before.csv` and `aggregate_after.csv`) 
-- and summary reports (`summary_before.csv` and `summary_after.csv`) before and after optimisations. 
+- aggregate reports ([Aggregate Report Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/shots/snapshots/jmeter/aggregate_before.csv)) and [Aggregate Report Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/shots/snapshots/jmeter/aggregate_after.csv))
+- and summary reports ([Summary Report Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/shots/snapshots/jmeter/summary_before.csv) and [Summary Report After](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/shots/snapshots/jmeter/summary_after.csv)) before and after optimisations. 
 
 The analysis covers five endpoints: 
 - `api/v1/tasks` (GET ALL TASKS)
@@ -12,11 +12,9 @@ The analysis covers five endpoints:
 - `api/v1/projects` (GET PROJECTS)
 - `api/v1/users` (GET ALL USERS)
 - `api/v1/users/{id}/tasks` (GET USER TASKS)
-
-with a total of 2000 samples each. 
-The tests were conducted using JMeter with *200 threads (users)*, *a ramp-up period of 60 seconds*, and a *loop count of 2*. 
-The goal is to evaluate the impact of optimisations, compare aggregate and summary data and identify anomalies, and provide action plans for long term optimisations.
-
+  
+  with a total of 2000 samples each. 
+  The tests were conducted using JMeter with **200 threads (users)**, **a ramp-up period of 60 seconds**, and a **loop count of 2**. The goal is to evaluate the impact of optimisations, compare aggregate and summary data and identify anomalies, and provide action plans for long term optimisations.
 ---
 
 ## Response Time Analysis
