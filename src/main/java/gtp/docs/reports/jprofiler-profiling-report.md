@@ -200,6 +200,27 @@ Overall System After
 
 ---
 
+## Prometheus/Grafana Dashboard
+
+> **NOTE**:
+>> To view the full Grafana dashboards, follow the links below to see full snapshots:
+>>> 1. [Grafana Dashboard Before Optimisation](https://snapshots.raintank.io/dashboard/snapshot/hms6TKMdlKsdiHIZwdh6e424YssZ4ycE)
+>>> 2. [Grafana Dashboard After Optimisation](https://snapshots.raintank.io/dashboard/snapshot/yOBi51P72SCnc3OjVpft2mAUFRxnJKVK)
+
+### Screenshots
+
+**1. Before Optimisation**
+
+Grafana Dashboard before optimisation
+
+![](https://github.com/thenoblet/project-tracker/blob/31fb3399cf6d0dc5fea0e077b1aefe32acb3e3b2/src/main/resources/images/before/grafana_before.png)
+
+**2. After Optimisation**
+
+Grafana Dashboard After optimisation
+
+![](https://github.com/thenoblet/project-tracker/blob/31fb3399cf6d0dc5fea0e077b1aefe32acb3e3b2/src/main/resources/images/after/grafana_after.png)
+
 ## ✅ Summary of Improvements
 
 ### Major Wins:
