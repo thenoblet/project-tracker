@@ -2,6 +2,7 @@ package gtp.projecttracker.dto.request.task;
 
 import gtp.projecttracker.model.jpa.Task.Priority;
 import gtp.projecttracker.model.jpa.Task.Status;
+
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 

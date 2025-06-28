@@ -17,6 +17,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,6 +31,8 @@ import java.util.UUID;
 
 @Service
 public class ProjectService {
+    private final ApplicationEventPublisher eventPublisher;
+
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
     private final TaskRepository taskRepository;
@@ -40,12 +43,15 @@ public class ProjectService {
     public ProjectService(ProjectRepository projectRepository,
                           ProjectMapper projectMapper,
                           TaskRepository taskRepository,
-                          TaskService taskService, TaskMapper taskMapper) {
+                          TaskService taskService,
+                          TaskMapper taskMapper,
+                          ApplicationEventPublisher eventPublisher) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.taskRepository = taskRepository;
         this.taskService = taskService;
         this.taskMapper = taskMapper;
+        this.eventPublisher = eventPublisher;
     }
 
     @Cacheable(value = "projects", key = "#id")
@@ -65,16 +71,26 @@ public class ProjectService {
     @Transactional
     @CacheEvict(value = "projects", key = "#id")
     public ProjectResponse updateProject(UUID id, UpdateProjectRequest projectRequest) {
-        // Validate all fields are present for full update
-        if (projectRequest.name().isEmpty() || projectRequest.description().isEmpty() ||
-                projectRequest.startDate() == null || projectRequest.deadline() == null ||
-                projectRequest.status().isEmpty()) {
-            throw new IllegalArgumentException("All fields must be provided for full update");
-        }
-
         Project existingProject = projectRepository.findProjectById(id);
+
+        boolean nameChanged = projectRequest.name()
+                .map(newName -> !newName.equals(existingProject.getName()))
+                .orElse(false);
+
+        boolean statusChanged = projectRequest.status()
+                .map(newStatus -> existingProject.getStatus() != ProjectStatus.valueOf(String.valueOf(newStatus)))
+                .orElse(false);
+
         projectMapper.updateEntity(projectRequest, existingProject);
         Project updatedProject = projectRepository.save(existingProject);
+
+        eventPublisher.publishEvent(new ProjectUpdatedEvent(
+                id,
+                updatedProject.getName(),
+                nameChanged,
+                statusChanged
+        ));
+
         return projectMapper.toResponse(updatedProject);
     }
 
@@ -82,8 +98,25 @@ public class ProjectService {
     @CacheEvict(value = "projects", key = "#id")
     public ProjectResponse patchProject(UUID id, UpdateProjectRequest projectRequest) {
         Project existingProject = projectRepository.findProjectById(id);
+
+        boolean nameChanged = projectRequest.name()
+                .filter(newName -> !newName.equals(existingProject.getName()))
+                .isPresent();
+
+        boolean statusChanged = projectRequest.status()
+                .filter(newStatus -> existingProject.getStatus() != ProjectStatus.valueOf(String.valueOf(newStatus)))
+                .isPresent();
+
         projectMapper.updateEntity(projectRequest, existingProject);
         Project patchedProject = projectRepository.save(existingProject);
+
+        eventPublisher.publishEvent(new ProjectUpdatedEvent(
+                id,
+                patchedProject.getName(),
+                nameChanged,
+                statusChanged
+        ));
+
         return projectMapper.toResponse(patchedProject);
     }
 
@@ -105,6 +138,7 @@ public class ProjectService {
         return projectRepository.findAll(pageable)
                 .map(projectMapper::toSummaryResponse);
     }
+
 
     public Page<ProjectResponse> getAllProjectsWithTasks(Pageable pageable) {
         return projectRepository.findAllWithTasks(pageable)
@@ -197,12 +231,18 @@ public class ProjectService {
     @CacheEvict(value = "projects", key = "#id")
     public ProjectResponse updateProjectStatus(UUID id, ProjectStatus status) {
         Project existingProject = projectRepository.findProjectById(id);
-        if (existingProject == null) {
-            throw new EntityNotFoundException("Project not found with id: " + id);
-        }
+        boolean statusChanged = existingProject.getStatus() != ProjectStatus.valueOf(status.name());
 
-        existingProject.setStatus(Project.ProjectStatus.valueOf(status.name()));
+        existingProject.setStatus(ProjectStatus.valueOf(status.name()));
         Project updatedProject = projectRepository.save(existingProject);
+
+        eventPublisher.publishEvent(new ProjectUpdatedEvent(
+                id,
+                updatedProject.getName(),
+                false,
+                statusChanged
+        ));
+
         return projectMapper.toResponse(updatedProject);
     }
 

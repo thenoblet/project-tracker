@@ -38,4 +38,8 @@ public class UserService {
     public Optional<User> getUserById(UUID id) {
         return userRepository.findById(id);
     }
+
+    public boolean existsById(UUID userId) {
+        return userRepository.existsById(userId);
+    }
 }

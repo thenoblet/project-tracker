@@ -58,9 +58,9 @@ public class TaskService {
         this.securityUtil = securityUtil;
     }
 
-    public Page<TaskResponse> getTasks(Pageable pageable) {
+    public Page<TaskSummaryResponse> getTasks(Pageable pageable) {
         return taskRepository.findAll(pageable)
-                .map(taskMapper::toResponse);
+                .map(taskMapper::toSummaryResponse);
     }
 
     public Page<TaskResponse> getTasksByProjectId(UUID projectId, Pageable pageable) {
@@ -182,6 +182,23 @@ public class TaskService {
         return taskMapper.toResponse(taskRepository.save(entity));
     }
 
+    /**
+     * Retrieves all tasks assigned to a specific user with pagination support
+     *
+     * @param userId The ID of the user whose tasks should be retrieved
+     * @param pageable Pagination information (page number, size, sorting)
+     * @return Page of TaskResponse DTOs
+     * @throws ResourceNotFoundException If the user with specified ID doesn't exist
+     */
+    public Page<TaskSummaryResponse> getTasksByUserId(UUID userId, Pageable pageable) {
+        if (!userService.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found with ID: " + userId);
+        }
+
+        return taskRepository.findByAssigneeId(userId, pageable)
+                .map(taskMapper::toSummaryResponse);
+    }
+
     @Transactional
     public void deleteAllTasksByProjectId(UUID id) {
         if (!taskRepository.existsByProjectId(id)) {
@@ -204,7 +221,7 @@ public class TaskService {
         ).map(taskMapper::toResponse);
     }
 
-    @Scheduled(fixedDelayString = "${app.notifications.overdue-check-interval:5000}")
+    @Scheduled(fixedDelayString = "${app.notifications.overdue-check-interval:300000}")
     @Transactional
     public void checkAndNotifyOverdueTasks() {
 
@@ -226,11 +243,8 @@ public class TaskService {
     }
 
     public void checkAndNotifyIfOverdue(Task task) {
-        log.info("Checking for overdue task {}", task.getId());
-
         try {
             LocalDate lastNotified = lastNotificationSent.get(task.getId());
-            log.info("Last notification sent: {}", lastNotified);
             LocalDate today = LocalDate.now();
             log.info("Today: {}", today);
             log.info("Task due date: {}", task.getDueDate());

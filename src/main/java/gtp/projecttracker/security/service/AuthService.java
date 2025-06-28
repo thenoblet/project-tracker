@@ -60,7 +60,6 @@ public class AuthService {
         }
 
         if (userRepository.existsByEmail(sanitised.email())) {
-            log.warn("Registration attempt with existing email: {}", sanitised.email());
             throw new IllegalArgumentException("Email already exists: " + sanitised.email());
         }
 
@@ -90,7 +89,6 @@ public class AuthService {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             return generateTokenResponse(userDetails);
         } catch (BadCredentialsException ex) {
-            log.warn("Failed login attempt for email: {}", request.email());
             throw ex;
         }
     }
