@@ -18,6 +18,24 @@ The Project Tracker API is a comprehensive backend solution for BuildMaster, a r
 - **Audit logging**: All changes tracked in MongoDB
 - **RESTful API**: Comprehensive endpoints for all operations
 
+## Performance and Optimisation Reports
+
+Performance reports were created both **before and after optimisations** using JMeter (for load testing) and JProfiler (for runtime profiling).
+
+### What was tested
+
+* Load tests with JMeter simulating up to **200 concurrent users**, targeting critical endpoints in `/projects`, `/tasks`, and `/users`.
+* Profiling with JProfiler to analyse:
+
+  * **Heap & memory allocations**
+  * **Garbage Collection frequency & pauses**
+  * **CPU hot methods**
+  * **Thread activity & potential bottlenecks**
+ 
+Click on the links below to look at reports
+* [JMeter Report](https://github.com/thenoblet/project-tracker/blob/2238ed789d4f7819ec466ed95b1c897728353b3b/src/main/java/gtp/docs/reports/jmeter-performance-report.md)
+* [JProfiler Report](https://github.com/thenoblet/project-tracker/blob/2238ed789d4f7819ec466ed95b1c897728353b3b/src/main/java/gtp/docs/reports/jprofiler-profiling-report.md)
+
 ---
 
 ## Entity Model
