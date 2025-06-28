@@ -27,8 +27,20 @@ The optimisation efforts have yielded significant improvements across all key pe
 
 > **Notable**: While absolute memory usage remained similar, the allocation pattern became much more predictable, indicating better object lifecycle management.
 
-### Screenshots:
-**Before
+### Screenshots
+
+**1. Before Optimisation**
+
+Memory Alloc Tree Before
+
+![Memory Alloc Tree Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/before/allocation_tree_before.png)
+
+**2. After Optimisation**
+
+Memory Alloc Tree After
+
+![Memory Alloc Tree After](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/after/allocation_tree_after.png)
+
 ---
 
 ## 🔥 CPU & Hot Methods Analysis
@@ -50,6 +62,20 @@ The optimisation efforts have yielded significant improvements across all key pe
 - **Controller layer**: Reduced overhead in project and task controllers
 
 > **Concern**: The `TaskThreadsWrappingRunnable.run` method actually increased from 82.7% to 89.3% CPU usage, suggesting this may be a new bottleneck or the optimisation shifted load concentration.
+
+### Screenshots
+
+**1. Before Optimisation**
+
+Memory Alloc Hotspot Before
+
+![Memory Alloc Hotspot Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/before/allocation_hotspots_before.png)
+
+**2. After Optimisation**
+
+[Memory Alloc Hostpot After
+
+![Memory Alloc Hostpot After](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/after/allocation_hotspot_after.png)
 
 ---
 
@@ -79,6 +105,19 @@ The optimisation efforts have yielded significant improvements across all key pe
 
 > **Excellent improvement**: The GC optimisation is one of the most significant wins, with much more predictable and less frequent garbage collection cycles.
 
+### Screenshots
+
+**1. Before Optimisation**
+
+GC Activity Before
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/before/gc_activity_before.png)
+
+**2. After Optimisation**
+
+GC Activity After
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/after/gc_activity_after.png)
 ---
 
 ## 🧵 Thread Management Analysis
@@ -106,6 +145,19 @@ The optimisation efforts have yielded significant improvements across all key pe
 
 > **Good optimisation**: While thread count remained the same, the utilisation pattern became much more efficient with reduced contention.
 
+### Screenshots
+
+**1. Before Optimisation**
+
+Thread Before
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/before/threads_before.png)
+
+**2. After Optimisation**
+
+Thread After
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/after/threads_after.png)
 ---
 
 ## 📈 Dashboard Trend Analysis
@@ -131,6 +183,20 @@ The optimisation efforts have yielded significant improvements across all key pe
 - **Before**: Moderate but inconsistent CPU usage
 - **After**: More stable CPU utilisation patterns
 - **Improvement**: Better resource utilisation efficiency
+
+### Screenshots
+
+**1. Before Optimisation**
+
+Overall System Before
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/before/overview_before.png)
+
+**2. After Optimisation**
+
+Overall System After
+
+![](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/images/after/overview_after.png)
 
 ---
 
