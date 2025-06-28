@@ -3,7 +3,7 @@
 ## Overview
 
 This report analyses the performance of a Spring Boot application based on JMeter reports: 
-- aggregate reports ([Aggregate Report Before]([shots/snapshots/jmeter/aggregate_before.csv](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/shots/snapshots/jmeter/aggregate_before.csv)) and [Aggregate Report Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/shots/snapshots/jmeter/aggregate_after.csv))
+- aggregate reports ([Aggregate Report Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/shots/snapshots/jmeter/aggregate_before.csv)) and [Aggregate Report Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/shots/snapshots/jmeter/aggregate_after.csv))
 - and summary reports ([Summary Report Before](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/shots/snapshots/jmeter/summary_before.csv) and [Summary Report After](https://github.com/thenoblet/project-tracker/blob/4ffb1831e43a59d8a278b7837a61b525085eb034/src/main/resources/shots/snapshots/jmeter/summary_after.csv)) before and after optimisations. 
 
 The analysis covers five endpoints: 
