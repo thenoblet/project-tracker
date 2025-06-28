@@ -3,7 +3,7 @@
 ## Overview
 
 This report analyses the performance of a Spring Boot application based on JMeter reports: 
-- aggregate reports (`aggregate_before.csv` and `aggregate_after.csv`) 
+- aggregate reports (![Aggregate Report Before](shots/snapshots/jmeter/aggregate_before.csv) and ![Aggregate Report Before](aggregate_after.csv) 
 - and summary reports (`summary_before.csv` and `summary_after.csv`) before and after optimisations. 
 
 The analysis covers five endpoints: 
@@ -16,7 +16,6 @@ The analysis covers five endpoints:
 with a total of 2000 samples each. 
 The tests were conducted using JMeter with *200 threads (users)*, *a ramp-up period of 60 seconds*, and a *loop count of 2*. 
 The goal is to evaluate the impact of optimisations, compare aggregate and summary data and identify anomalies, and provide action plans for long term optimisations.
-
 ---
 
 ## Response Time Analysis
