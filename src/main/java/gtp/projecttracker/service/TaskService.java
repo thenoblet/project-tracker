@@ -4,6 +4,7 @@ import gtp.projecttracker.dto.request.task.AssignTaskRequest;
 import gtp.projecttracker.dto.request.task.CreateTaskRequest;
 import gtp.projecttracker.dto.request.task.UpdateTaskRequest;
 import gtp.projecttracker.dto.response.task.TaskResponse;
+import gtp.projecttracker.dto.response.task.TaskSummaryResponse;
 import gtp.projecttracker.event.TaskOverdueEvent;
 import gtp.projecttracker.exception.ResourceNotFoundException;
 import gtp.projecttracker.mapper.TaskMapper;
@@ -12,8 +13,8 @@ import gtp.projecttracker.model.jpa.Task.Status;
 import gtp.projecttracker.model.jpa.Task.Priority;
 import gtp.projecttracker.model.jpa.User;
 import gtp.projecttracker.repository.jpa.TaskRepository;
-
 import gtp.projecttracker.security.util.SecurityUtil;
+
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 

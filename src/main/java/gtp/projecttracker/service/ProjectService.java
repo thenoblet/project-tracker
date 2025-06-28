@@ -5,6 +5,7 @@ import gtp.projecttracker.dto.request.project.UpdateProjectRequest;
 import gtp.projecttracker.dto.response.project.ProjectResponse;
 import gtp.projecttracker.dto.response.project.ProjectSummaryResponse;
 import gtp.projecttracker.dto.response.task.TaskResponse;
+import gtp.projecttracker.event.ProjectUpdatedEvent;
 import gtp.projecttracker.mapper.ProjectMapper;
 import gtp.projecttracker.mapper.TaskMapper;
 import gtp.projecttracker.model.jpa.Project;
