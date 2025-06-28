@@ -28,7 +28,8 @@ The optimisation efforts have yielded significant improvements across all key pe
 > **Notable**: While absolute memory usage remained similar, the allocation pattern became much more predictable, indicating better object lifecycle management.
 
 ### Screenshots:
-**Before
+** Before Optimisation **
+![Memory Alloc Before]()
 ---
 
 ## 🔥 CPU & Hot Methods Analysis
